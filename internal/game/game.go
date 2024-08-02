@@ -6,17 +6,16 @@ import (
 	"log"
 )
 
-const ()
-
 type Game struct {
-	world  *World
-	user   *User
-	pixels []byte
+	world             *World
+	monstersContainer *MonstersContainer
+	Home              *Home
+	pixels            []byte
 }
 
 func (g *Game) Update() error {
 	g.world.Update()
-	g.user.Update()
+	g.monstersContainer.Update()
 	return nil
 }
 
@@ -24,11 +23,9 @@ func (g *Game) Draw(screen *ebiten.Image) {
 	if g.pixels == nil {
 		g.pixels = make([]byte, consts.GameWidth*consts.GameHeight*4)
 	}
-	g.world.Draw(g.pixels)
-	screen.WritePixels(g.pixels)
-
-	g.user.Draw(screen)
-
+	g.world.Draw(screen)
+	g.Home.Draw(screen)
+	g.monstersContainer.Draw(screen)
 }
 
 func (g *Game) Layout(outsideWidth, outsideHeight int) (int, int) {
@@ -37,9 +34,11 @@ func (g *Game) Layout(outsideWidth, outsideHeight int) (int, int) {
 
 func NewGame() *Game {
 	world := NewWorld(consts.GameWidth, consts.GameHeight)
+	home := NewHome()
 	return &Game{
-		world: world,
-		user:  NewUser(),
+		world:             world,
+		Home:              home,
+		monstersContainer: NewMonstersContainer(),
 	}
 }
 

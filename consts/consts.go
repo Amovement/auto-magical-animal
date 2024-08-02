@@ -4,5 +4,9 @@ const (
 	GameWidth  = 640
 	GameHeight = 640
 
-	UserImage = "http://1.116.45.49/i/2024/08/02/qgvsom.png"
+	UserImage    = "https://s3.bmp.ovh/imgs/2024/08/02/ced70c73b509f81f.png"
+	HomeImage    = "https://s3.bmp.ovh/imgs/2024/08/02/3ed11e6d363cfbc4.png"
+	MonsterImage = "https://s3.bmp.ovh/imgs/2024/08/02/21d9e687d9cff87d.png"
+
+	TimeInterval = 60
 )
