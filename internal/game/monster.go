@@ -46,22 +46,39 @@ func (m *MonstersContainer) Draw(screen *ebiten.Image) {
 
 // Update game state by one tick.
 func (m *MonstersContainer) Update() {
+	// 每秒随机生产一只怪物
 	if tick == 0 {
-		// 随机生产一只怪物
 		rand.Seed(time.Now().UnixNano())
-		randNum := rand.Intn(2)
+		randNum := rand.Intn(4)
 		if randNum == 0 {
 			// (0, y)
 			m.monsters = append(m.monsters, &Monster{
 				locateX: 0,
 				locateY: float64(rand.Intn(consts.GameHeight)),
 			})
-		} else {
+		} else if randNum == 1 {
 			// (x, 0)
 			m.monsters = append(m.monsters, &Monster{
 				locateX: float64(rand.Intn(consts.GameWidth)),
 				locateY: 0,
 			})
+		} else if randNum == 2 {
+			// (x, GameHeight)
+			m.monsters = append(m.monsters, &Monster{
+				locateX: float64(rand.Intn(consts.GameWidth)),
+				locateY: float64(consts.GameHeight),
+			})
+		} else if randNum == 3 {
+			// (GameWidth, y)
+			m.monsters = append(m.monsters, &Monster{
+				locateX: float64(consts.GameWidth),
+				locateY: float64(rand.Intn(consts.GameHeight)),
+			})
 		}
+	}
+
+	// 怪物向 Home 移动
+	for i := 0; i < len(m.monsters); i++ {
+		// todo
 	}
 }
