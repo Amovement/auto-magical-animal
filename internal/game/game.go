@@ -7,25 +7,42 @@ import (
 )
 
 type Game struct {
-	world             *World
-	monstersContainer *MonstersContainer
-	Home              *Home
-	pixels            []byte
+	world                  *World
+	cursor                 *Cursor
+	monstersContainer      *MonstersContainer
+	animalsContainer       *AnimalsContainer
+	home                   *Home
+	weather                *Weather
+	bulletPresentContainer *BulletPresentContainer
+	framesLogicContainer   *FramesLogicContainer
 }
 
 func (g *Game) Update() error {
-	g.world.Update()
-	g.monstersContainer.Update()
+	if gameStatus == consts.GameStatusPause || gameStatus == consts.GameStatusEnd {
+		return nil
+	}
+	// Cursor update
+	g.cursor.ListenMouseEvent()
+	// Weather update
+	g.weather.Update()
+	// home and animals fire a bullet
+	g.home.Update()
+	g.animalsContainer.Update()
+	// Create monster
+	g.monstersContainer.CreateMonster()
+	// Game frames logic update
+	g.framesLogicContainer.Update(g)
 	return nil
 }
 
 func (g *Game) Draw(screen *ebiten.Image) {
-	if g.pixels == nil {
-		g.pixels = make([]byte, consts.GameWidth*consts.GameHeight*4)
-	}
 	g.world.Draw(screen)
-	g.Home.Draw(screen)
+	g.weather.Draw(screen)
+	g.home.Draw(screen)
+	g.animalsContainer.Draw(screen)
 	g.monstersContainer.Draw(screen)
+	g.bulletPresentContainer.Draw(screen)
+	g.cursor.Draw(screen)
 }
 
 func (g *Game) Layout(outsideWidth, outsideHeight int) (int, int) {
@@ -33,12 +50,15 @@ func (g *Game) Layout(outsideWidth, outsideHeight int) (int, int) {
 }
 
 func NewGame() *Game {
-	world := NewWorld(consts.GameWidth, consts.GameHeight)
-	home := NewHome()
 	return &Game{
-		world:             world,
-		Home:              home,
-		monstersContainer: NewMonstersContainer(),
+		world:                  NewWorld(consts.GameWidth, consts.GameHeight),
+		weather:                NewWeather(),
+		home:                   NewHome(),
+		animalsContainer:       NewAnimalsContainer(),
+		monstersContainer:      NewMonstersContainer(),
+		bulletPresentContainer: NewBulletPresentContainer(),
+		framesLogicContainer:   NewFramesLogicContainer(),
+		cursor:                 NewCursor(),
 	}
 }
 

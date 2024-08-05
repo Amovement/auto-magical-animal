@@ -10,7 +10,7 @@ import (
 )
 
 func main() {
-	// 打开源图像文件
+	// Open the source image file
 	inputFile, err := os.Open("input.png")
 	if err != nil {
 		fmt.Println("Error opening input file:", err)
@@ -18,23 +18,23 @@ func main() {
 	}
 	defer inputFile.Close()
 
-	// 解码源图像
+	// Decoded source image
 	srcImg, _, err := image.Decode(inputFile)
 	if err != nil {
 		fmt.Println("Error decoding image:", err)
 		return
 	}
 
-	// 设置缩放比例
-	newWidth := uint(25)   // 新的宽度
-	newHeight := uint(600) // 新的高度
-	// 这里可以根据需要设置缩放比例，例如保持宽高比
+	// Set scale
+	newWidth := uint(25)   // New width
+	newHeight := uint(600) // New height
+	// Here you can set the scale as needed, for example to maintain the aspect ratio
 	newHeight = uint(float64(srcImg.Bounds().Dy()) * float64(newWidth) / float64(srcImg.Bounds().Dx()))
 
-	// 等比缩放图像
+	// Scale the image in equal proportions
 	resizedImg := resize.Resize(newWidth, newHeight, srcImg, resize.Lanczos3)
 
-	// 创建输出图像文件
+	// Create the output image file
 	outputFile, err := os.Create("output.png")
 	if err != nil {
 		fmt.Println("Error creating output file:", err)
@@ -42,7 +42,7 @@ func main() {
 	}
 	defer outputFile.Close()
 
-	// 将缩放后的图像编码并保存为PNG文件
+	// Encode and save the scaled image as a PNG file
 	err = png.Encode(outputFile, resizedImg)
 	if err != nil {
 		fmt.Println("Error encoding image:", err)

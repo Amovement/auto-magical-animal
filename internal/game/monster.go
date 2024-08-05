@@ -15,8 +15,9 @@ type MonstersContainer struct {
 }
 
 type Monster struct {
-	locateX float64
-	locateY float64
+	locateX     float64
+	locateY     float64
+	healthPoint int
 }
 
 func NewMonstersContainer() *MonstersContainer {
@@ -30,13 +31,13 @@ func NewMonstersContainer() *MonstersContainer {
 	}
 }
 
-// Draw 绘制怪物
+// Draw monsters
 func (m *MonstersContainer) Draw(screen *ebiten.Image) {
 	for _, monster := range m.monsters {
 		option := &ebiten.DrawImageOptions{}
 		option.GeoM.Translate(monster.locateX, monster.locateY)
 
-		// 绘制怪物
+		// Draw monsters
 		screen.DrawImage(
 			m.image,
 			option,
@@ -44,41 +45,40 @@ func (m *MonstersContainer) Draw(screen *ebiten.Image) {
 	}
 }
 
-// Update game state by one tick.
-func (m *MonstersContainer) Update() {
-	// 每秒随机生产一只怪物
+// CreateMonster create a monster every second
+func (m *MonstersContainer) CreateMonster() {
+	// create a monster every second
 	if tick == 0 {
 		rand.Seed(time.Now().UnixNano())
 		randNum := rand.Intn(4)
 		if randNum == 0 {
 			// (0, y)
 			m.monsters = append(m.monsters, &Monster{
-				locateX: 0,
-				locateY: float64(rand.Intn(consts.GameHeight)),
+				healthPoint: 100,
+				locateX:     -consts.SmallUnitPx,
+				locateY:     float64(rand.Intn(consts.GameHeight)),
 			})
 		} else if randNum == 1 {
 			// (x, 0)
 			m.monsters = append(m.monsters, &Monster{
-				locateX: float64(rand.Intn(consts.GameWidth)),
-				locateY: 0,
+				healthPoint: 100,
+				locateX:     float64(rand.Intn(consts.GameWidth)),
+				locateY:     -consts.SmallUnitPx,
 			})
 		} else if randNum == 2 {
 			// (x, GameHeight)
 			m.monsters = append(m.monsters, &Monster{
-				locateX: float64(rand.Intn(consts.GameWidth)),
-				locateY: float64(consts.GameHeight),
+				healthPoint: 100,
+				locateX:     float64(rand.Intn(consts.GameWidth)),
+				locateY:     float64(consts.GameHeight + consts.SmallUnitPx),
 			})
 		} else if randNum == 3 {
 			// (GameWidth, y)
 			m.monsters = append(m.monsters, &Monster{
-				locateX: float64(consts.GameWidth),
-				locateY: float64(rand.Intn(consts.GameHeight)),
+				healthPoint: 100,
+				locateX:     float64(consts.GameWidth + consts.SmallUnitPx),
+				locateY:     float64(rand.Intn(consts.GameHeight)),
 			})
 		}
-	}
-
-	// 怪物向 Home 移动
-	for i := 0; i < len(m.monsters); i++ {
-		// todo
 	}
 }
