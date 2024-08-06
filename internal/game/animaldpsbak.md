@@ -1,0 +1,4 @@
+- home 15
+- cat 15
+- fish 20
+- penguin 15

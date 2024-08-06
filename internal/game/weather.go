@@ -4,7 +4,6 @@ import (
 	"github.com/Amovement/auto-magical-animal/consts"
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
-	"log"
 	"math/rand"
 )
 
@@ -17,30 +16,33 @@ type Weather struct {
 	weatherName string
 	// The weather duration indicates how many game frames have passed
 	weatherDuration int
+	// Background images
+	backgroundImages []*ebiten.Image
 }
 
 func NewWeather() *Weather {
-	var images []*ebiten.Image
-	weatherImage, err := ebitenutil.NewImageFromURL(consts.WeatherSunnyImage)
-	if err != nil {
-		log.Panic(err)
-	}
+	var images, backgroundImages []*ebiten.Image
+	weatherImage, _ := ebitenutil.NewImageFromURL(consts.WeatherSunnyImage)
 	images = append(images, weatherImage)
-	weatherImage, err = ebitenutil.NewImageFromURL(consts.WeatherRainImage)
-	if err != nil {
-		log.Panic(err)
-	}
+	weatherImage, _ = ebitenutil.NewImageFromURL(consts.BackgroundImageSunny)
+	backgroundImages = append(backgroundImages, weatherImage)
+
+	weatherImage, _ = ebitenutil.NewImageFromURL(consts.WeatherRainImage)
 	images = append(images, weatherImage)
-	weatherImage, err = ebitenutil.NewImageFromURL(consts.WeatherSnowImage)
-	if err != nil {
-		log.Panic(err)
-	}
+	weatherImage, _ = ebitenutil.NewImageFromURL(consts.BackgroundImageRain)
+	backgroundImages = append(backgroundImages, weatherImage)
+
+	weatherImage, _ = ebitenutil.NewImageFromURL(consts.WeatherSnowImage)
 	images = append(images, weatherImage)
+	weatherImage, _ = ebitenutil.NewImageFromURL(consts.BackgroundImageSnow)
+	backgroundImages = append(backgroundImages, weatherImage)
+
 	return &Weather{
-		image:           images,
-		weatherType:     consts.WeatherSunnyType, // Init to sunny
-		weatherName:     consts.WeatherSunnyName,
-		weatherDuration: 0,
+		image:            images,
+		backgroundImages: backgroundImages,
+		weatherType:      consts.WeatherSunnyType, // Init to sunny
+		weatherName:      consts.WeatherSunnyName,
+		weatherDuration:  0,
 	}
 }
 
@@ -68,6 +70,8 @@ func (w *Weather) Update() {
 }
 
 func (w *Weather) Draw(screen *ebiten.Image) {
+	screen.DrawImage(w.backgroundImages[w.weatherType], nil)
+
 	ebitenutil.DebugPrint(screen, "Current weather: "+w.weatherName)
 
 	option := &ebiten.DrawImageOptions{}

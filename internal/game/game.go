@@ -7,7 +7,6 @@ import (
 )
 
 type Game struct {
-	world                  *World
 	cursor                 *Cursor
 	monstersContainer      *MonstersContainer
 	animalsContainer       *AnimalsContainer
@@ -15,11 +14,18 @@ type Game struct {
 	weather                *Weather
 	bulletPresentContainer *BulletPresentContainer
 	framesLogicContainer   *FramesLogicContainer
+	info                   *Info
 }
 
 func (g *Game) Update() error {
 	if gameStatus == consts.GameStatusPause || gameStatus == consts.GameStatusEnd {
-		return nil
+		// Monitor whether the user presses the space key when the game pauses or ends
+		if ebiten.IsKeyPressed(ebiten.KeySpace) {
+			// restart game
+			RestartGame(g)
+		} else {
+			return nil
+		}
 	}
 	// Cursor update
 	g.cursor.ListenMouseEvent()
@@ -36,13 +42,13 @@ func (g *Game) Update() error {
 }
 
 func (g *Game) Draw(screen *ebiten.Image) {
-	g.world.Draw(screen)
 	g.weather.Draw(screen)
 	g.home.Draw(screen)
 	g.animalsContainer.Draw(screen)
 	g.monstersContainer.Draw(screen)
 	g.bulletPresentContainer.Draw(screen)
 	g.cursor.Draw(screen)
+	g.info.Draw(screen)
 }
 
 func (g *Game) Layout(outsideWidth, outsideHeight int) (int, int) {
@@ -51,7 +57,6 @@ func (g *Game) Layout(outsideWidth, outsideHeight int) (int, int) {
 
 func NewGame() *Game {
 	return &Game{
-		world:                  NewWorld(consts.GameWidth, consts.GameHeight),
 		weather:                NewWeather(),
 		home:                   NewHome(),
 		animalsContainer:       NewAnimalsContainer(),
@@ -59,6 +64,7 @@ func NewGame() *Game {
 		bulletPresentContainer: NewBulletPresentContainer(),
 		framesLogicContainer:   NewFramesLogicContainer(),
 		cursor:                 NewCursor(),
+		info:                   NewInfo(),
 	}
 }
 
@@ -67,4 +73,11 @@ func StartGame() {
 	if err := ebiten.RunGame(game); err != nil {
 		log.Fatal(err)
 	}
+}
+
+func RestartGame(g *Game) {
+	g.animalsContainer = NewAnimalsContainer()
+	g.monstersContainer = NewMonstersContainer()
+	g.bulletPresentContainer = NewBulletPresentContainer()
+	RestartGlobal()
 }

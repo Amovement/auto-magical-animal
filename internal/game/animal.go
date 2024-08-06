@@ -61,19 +61,19 @@ func NewAnimal(animalType int, locateX, locateY float64) *Animal {
 	switch animalType {
 	case consts.AnimalTypeCat:
 		animal.image = animalImageCat
-		animal.attackInterval = 40
-		animal.bulletDamage = 20
+		animal.attackInterval = 20
+		animal.bulletDamage = 5
 		animal.bulletSpeed = 5
 	case consts.AnimalTypeFish:
 		animal.image = animalImageFish
-		animal.attackInterval = 40
-		animal.bulletDamage = 20
-		animal.bulletSpeed = 5
+		animal.attackInterval = 55
+		animal.bulletDamage = 30
+		animal.bulletSpeed = 2
 	case consts.AnimalTypePenguin:
 		animal.image = animalImagePenguin
 		animal.attackInterval = 40
-		animal.bulletDamage = 20
-		animal.bulletSpeed = 5
+		animal.bulletDamage = 10
+		animal.bulletSpeed = 10
 	}
 	return animal
 }

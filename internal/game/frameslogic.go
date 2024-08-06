@@ -126,6 +126,9 @@ func (f *FramesLogicContainer) monstersBulletsCollision(game *Game) {
 		monster := game.monstersContainer.monsters[i]
 		if monster.healthPoint > 0 {
 			newMonsters = append(newMonsters, monster)
+		} else if monster.healthPoint <= 0 {
+			// Kill a monster will add score
+			score++
 		}
 	}
 	game.monstersContainer.monsters = newMonsters
@@ -195,7 +198,10 @@ func (f *FramesLogicContainer) addAnimalInVector2PresentContainer(game *Game) {
 		if tooCloseTag {
 			continue
 		} else {
-			game.animalsContainer.animals = append(game.animalsContainer.animals, animalVector[index])
+			if score >= 20 { // Check if the score is enough to buy an animal
+				game.animalsContainer.animals = append(game.animalsContainer.animals, animalVector[index])
+				score -= 20
+			}
 		}
 	}
 	ClearAnimalVector()

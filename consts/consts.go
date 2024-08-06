@@ -6,10 +6,11 @@ const (
 
 	// Game resource address
 
-	HomeImage    = "https://s3.bmp.ovh/imgs/2024/08/02/3ed11e6d363cfbc4.png"
-	MonsterImage = "https://s3.bmp.ovh/imgs/2024/08/02/21d9e687d9cff87d.png"
-	BulletImage  = "https://s3.bmp.ovh/imgs/2024/08/05/28af2d2a0b3f732f.png"
-	CursorImage  = "https://s3.bmp.ovh/imgs/2024/08/05/2404d029c1889ec3.png"
+	HomeImage        = "https://s3.bmp.ovh/imgs/2024/08/02/3ed11e6d363cfbc4.png"
+	MonsterImage     = "https://s3.bmp.ovh/imgs/2024/08/02/21d9e687d9cff87d.png"
+	BulletImage      = "https://s3.bmp.ovh/imgs/2024/08/05/28af2d2a0b3f732f.png"
+	CursorImage      = "https://s3.bmp.ovh/imgs/2024/08/05/2404d029c1889ec3.png"
+	WindowsIconImage = "https://s3.bmp.ovh/imgs/2024/08/02/ced70c73b509f81f.png"
 
 	// TimeInterval 60 frames
 	TimeInterval = 60
@@ -39,6 +40,10 @@ const (
 	WeatherSunnyType  = 0
 	WeatherRainType   = 1
 	WeatherSnowType   = 2
+
+	BackgroundImageSunny = "https://s3.bmp.ovh/imgs/2024/08/06/e41999dc8211aead.png"
+	BackgroundImageRain  = "https://s3.bmp.ovh/imgs/2024/08/06/75fc34bf5847e53d.png"
+	BackgroundImageSnow  = "https://s3.bmp.ovh/imgs/2024/08/06/5d59c29c96f5dd4b.png"
 )
 
 // Animal resource
