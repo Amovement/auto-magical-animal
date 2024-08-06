@@ -43,6 +43,14 @@ const (
 
 // Animal resource
 const (
+	AnimalTypeByWeather = -1 // 随天气选择
+
 	AnimalTypeCat  = 0
 	AnimalImageCat = "https://s3.bmp.ovh/imgs/2024/08/05/2e5b945128128d57.png"
+
+	AnimalTypeFish  = 1
+	AnimalImageFish = "https://s3.bmp.ovh/imgs/2024/08/06/bfc20fd8665638c9.png"
+
+	AnimalTypePenguin  = 2
+	AnimalImagePenguin = "https://s3.bmp.ovh/imgs/2024/08/06/273e243c2c2cd1cf.png"
 )

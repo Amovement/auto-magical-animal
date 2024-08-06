@@ -47,7 +47,7 @@ func (c *Cursor) ListenMouseEvent() {
 	}
 	// Press space to create an animal
 	if ebiten.IsKeyPressed(ebiten.KeySpace) {
-		animalNew := NewAnimal(consts.AnimalTypeCat, c.locateX, c.locateY)
+		animalNew := NewAnimal(consts.AnimalTypeByWeather, c.locateX, c.locateY)
 		AppendAnimalVector(animalNew)
 	}
 }

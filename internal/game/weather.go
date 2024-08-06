@@ -63,6 +63,8 @@ func (w *Weather) Update() {
 		}
 		w.weatherDuration = 0
 	}
+	// set global weather type
+	weatherType = w.weatherType
 }
 
 func (w *Weather) Draw(screen *ebiten.Image) {

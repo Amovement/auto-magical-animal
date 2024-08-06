@@ -27,12 +27,22 @@ type AnimalsContainer struct {
 }
 
 var (
-	errAnimalImage error
-	animalImageCat *ebiten.Image
+	errAnimalImage     error
+	animalImageCat     *ebiten.Image
+	animalImageFish    *ebiten.Image
+	animalImagePenguin *ebiten.Image
 )
 
 func init() {
 	animalImageCat, errAnimalImage = ebitenutil.NewImageFromURL(consts.AnimalImageCat)
+	if errAnimalImage != nil {
+		panic(errAnimalImage)
+	}
+	animalImageFish, errAnimalImage = ebitenutil.NewImageFromURL(consts.AnimalImageFish)
+	if errAnimalImage != nil {
+		panic(errAnimalImage)
+	}
+	animalImagePenguin, errAnimalImage = ebitenutil.NewImageFromURL(consts.AnimalImagePenguin)
 	if errAnimalImage != nil {
 		panic(errAnimalImage)
 	}
@@ -45,9 +55,22 @@ func NewAnimal(animalType int, locateX, locateY float64) *Animal {
 		animalType:     animalType,
 		lastAttackTime: tick,
 	}
+	if animalType == consts.AnimalTypeByWeather {
+		animalType = weatherType
+	}
 	switch animalType {
 	case consts.AnimalTypeCat:
 		animal.image = animalImageCat
+		animal.attackInterval = 40
+		animal.bulletDamage = 20
+		animal.bulletSpeed = 5
+	case consts.AnimalTypeFish:
+		animal.image = animalImageFish
+		animal.attackInterval = 40
+		animal.bulletDamage = 20
+		animal.bulletSpeed = 5
+	case consts.AnimalTypePenguin:
+		animal.image = animalImagePenguin
 		animal.attackInterval = 40
 		animal.bulletDamage = 20
 		animal.bulletSpeed = 5

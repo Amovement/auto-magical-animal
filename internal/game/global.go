@@ -11,6 +11,8 @@ var (
 	bulletVector []*Bullet
 	// The animal queue generated under the current game frame
 	animalVector []*Animal
+	// Weather type look `weather.go` for details
+	weatherType int
 )
 
 func init() {
