@@ -1,6 +1,7 @@
 package game
 
 import (
+	"fmt"
 	"github.com/Amovement/auto-magical-animal/consts"
 	"math"
 )
@@ -16,11 +17,13 @@ func NewFramesLogicContainer() *FramesLogicContainer {
 }
 
 func (f *FramesLogicContainer) Update(game *Game) {
+	//f.printGameLog(game)
 	// Update current frame
 	TickRunning()
 
 	f.addBulletInVector2PresentContainer(game)
 	f.addAnimalInVector2PresentContainer(game)
+	f.addInfoInVector2InfoContainer(game)
 
 	f.bulletsMove(game)
 	f.monstersBulletsCollision(game)
@@ -205,4 +208,23 @@ func (f *FramesLogicContainer) addAnimalInVector2PresentContainer(game *Game) {
 		}
 	}
 	ClearAnimalVector()
+}
+
+func (f *FramesLogicContainer) printGameLog(game *Game) {
+	//for i := 0; i < len(game.bulletPresentContainer.bullets); i++ {
+	//	fmt.Printf("bullets: %+v\n", game.bulletPresentContainer.bullets[i])
+	//}
+	for i := 0; i < len(bulletVector); i++ {
+		fmt.Printf("bulletVector: %+v\n", bulletVector[i])
+	}
+}
+
+func (f *FramesLogicContainer) addInfoInVector2InfoContainer(game *Game) {
+	if game.infoContainer.infoBoxes == nil {
+		game.infoContainer.infoBoxes = []*Info{}
+	}
+	for _, v := range infoVector {
+		game.infoContainer.infoBoxes = append(game.infoContainer.infoBoxes, v)
+	}
+	ClearInfoVector()
 }

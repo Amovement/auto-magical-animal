@@ -13,6 +13,8 @@ var (
 	bulletVector []*Bullet
 	// The animal queue generated under the current game frame
 	animalVector []*Animal
+	// The info queue generated under the current game frame
+	infoVector []*Info
 	// Weather type look `weather.go` for details
 	weatherType int
 	// The score of the game. Score also used to buy animals.
@@ -23,12 +25,13 @@ var (
 )
 
 func init() {
-	score = 0
+	score = 20
 	tick = 0
 	tickRounds = 0
 	gameStatus = 0
 	bulletVector = []*Bullet{}
 	animalVector = []*Animal{}
+	infoVector = []*Info{}
 }
 
 // SetGameStatus Set game state
@@ -52,8 +55,8 @@ func TickRunning() {
 	}
 }
 
-func AppendBulletVector(bullet *Bullet) {
-	bulletVector = append(bulletVector, bullet)
+func AppendBulletVector(bullet ...*Bullet) {
+	bulletVector = append(bulletVector, bullet...)
 }
 
 func ClearBulletVector() {
@@ -68,12 +71,20 @@ func ClearAnimalVector() {
 	animalVector = []*Animal{}
 }
 
+func AppendInfoVector(info ...*Info) {
+	infoVector = append(infoVector, info...)
+}
+
+func ClearInfoVector() {
+	infoVector = []*Info{}
+}
+
 // RestartGlobal Restart game global variables without maxScore
 func RestartGlobal() {
 	ClearBulletVector()
 	ClearAnimalVector()
 	tick = 0
 	tickRounds = 0
-	score = 0
+	score = 20
 	SetGameStatus(consts.GameStatusRunning)
 }

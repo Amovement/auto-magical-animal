@@ -14,12 +14,18 @@ type Game struct {
 	weather                *Weather
 	bulletPresentContainer *BulletPresentContainer
 	framesLogicContainer   *FramesLogicContainer
-	info                   *Info
+	infoContainer          *InfoContainer
 }
 
 func (g *Game) Update() error {
+	// Clear expired info
+	g.infoContainer.UpdateAndClearExpiredInfo()
+
 	if gameStatus == consts.GameStatusPause || gameStatus == consts.GameStatusEnd {
 		// Monitor whether the user presses the space key when the game pauses or ends
+		if gameStatus == consts.GameStatusEnd {
+			g.infoContainer.GameOverTips()
+		}
 		if ebiten.IsKeyPressed(ebiten.KeySpace) {
 			// restart game
 			RestartGame(g)
@@ -48,7 +54,7 @@ func (g *Game) Draw(screen *ebiten.Image) {
 	g.monstersContainer.Draw(screen)
 	g.bulletPresentContainer.Draw(screen)
 	g.cursor.Draw(screen)
-	g.info.Draw(screen)
+	g.infoContainer.Draw(screen)
 }
 
 func (g *Game) Layout(outsideWidth, outsideHeight int) (int, int) {
@@ -64,12 +70,13 @@ func NewGame() *Game {
 		bulletPresentContainer: NewBulletPresentContainer(),
 		framesLogicContainer:   NewFramesLogicContainer(),
 		cursor:                 NewCursor(),
-		info:                   NewInfo(),
+		infoContainer:          NewInfoContainer(),
 	}
 }
 
 func StartGame() {
 	game := NewGame()
+	game.infoContainer.InitGameTips()
 	if err := ebiten.RunGame(game); err != nil {
 		log.Fatal(err)
 	}
@@ -79,5 +86,10 @@ func RestartGame(g *Game) {
 	g.animalsContainer = NewAnimalsContainer()
 	g.monstersContainer = NewMonstersContainer()
 	g.bulletPresentContainer = NewBulletPresentContainer()
+	g.infoContainer = NewInfoContainer()
 	RestartGlobal()
+	ClearBulletVector()
+	ClearAnimalVector()
+	ClearInfoVector()
+	g.infoContainer.InitGameTips()
 }
