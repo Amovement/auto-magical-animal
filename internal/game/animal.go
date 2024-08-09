@@ -140,8 +140,8 @@ func (ac *AnimalsContainer) Update() {
 				bullets = append(bullets, bullet)
 			} else if animal.animalType == consts.AnimalTypePenguin {
 				// penguin fire bullets around itself
-				directionX := []float64{50, -50, 0}
-				directionY := []float64{50, -50, 0}
+				directionX := []float64{150, -150, 0}
+				directionY := []float64{150, -150, 0}
 				for _, dx := range directionX {
 					for _, dy := range directionY {
 						if dx == 0 && dy == 0 {
