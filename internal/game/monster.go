@@ -182,11 +182,8 @@ func (m *Monster) SurvivalSkill() {
 	case consts.MonsterTypeBossUFO:
 		if tickRounds%5 == 0 && tick == 0 {
 			// Boss UFO every 3 tickRound generates a zombie elite monster
-			createdMonster := NewMonster(consts.MonsterTypePurpleVirus, m.maxHealthPoint/10, tickRounds, 1,
-				m.locateX-float64(consts.SmallUnitPx*m.comeFromX), m.locateY, m.comeFromX, m.comeFromY)
-			AppendMonsterVector(createdMonster)
-			createdMonster = NewMonster(consts.MonsterTypePurpleVirus, m.maxHealthPoint/10, tickRounds, 1,
-				m.locateX, m.locateY-float64(consts.SmallUnitPx*m.comeFromY), m.comeFromX, m.comeFromY)
+			createdMonster := NewMonster(consts.MonsterTypeZombie, m.maxHealthPoint/10, tickRounds, 1,
+				m.locateX-float64(consts.SmallUnitPx*m.comeFromX), m.locateY-float64(consts.SmallUnitPx*m.comeFromY), m.comeFromX, m.comeFromY)
 			AppendMonsterVector(createdMonster)
 		}
 	}
