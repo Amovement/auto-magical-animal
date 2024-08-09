@@ -1,6 +1,7 @@
 # 神奇小动物自走棋 auto-magical-animal
 - 一个自娱自乐的小游戏.
 - A little game to entertain myself.
+  
 ## 游戏介绍 Game introduction
 - 玩家需要保护中心的房子不受伤害.
 - Players need to protect the house in the center from harm.
@@ -10,6 +11,12 @@
 - Animals bought in different weather will be different.
 - 玩家需要在强化防御或是等待分数上涨之间抉择.
 - Players need to decide between strengthening defense or waiting for the score to rise.
+
+# 开始游戏 Start Game
+- 在浏览器上玩 Play on your browser.
+- https://amovement.github.io/auto-magical-animal-web/
+- Or download download it to your computer.
+- https://github.com/Amovement/auto-magical-animal/releases
 
 # 该项目使用的引擎 Engine used in this project
 - https://github.com/hajimehoshi/ebiten
