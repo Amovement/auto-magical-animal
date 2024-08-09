@@ -179,7 +179,7 @@ func NewMonster(monsterType int, maxHealthPoint, healthPoint int, speed, locateX
 }
 
 // SurvivalSkill triggers when the monster is alive
-func (m *Monster) SurvivalSkill() {
+func (m *Monster) SurvivalSkill(game *Game) {
 	if m.healthPoint <= 0 {
 		return
 	}
@@ -201,7 +201,6 @@ func (m *Monster) Deathrattle(game *Game) {
 	}
 	// Deathrattle
 	if m.monsterType == consts.MonsterTypePurpleVirus {
-		// todo
 		// MonsterTypePurpleVirus skill need to be implemented
 		// Split into two small monsters, halving the maximum health points, less than 10 HP will die.
 		newPurpleVirusHealthPoint := m.maxHealthPoint / 2
@@ -211,7 +210,6 @@ func (m *Monster) Deathrattle(game *Game) {
 		revivedMonster = NewMonster(consts.MonsterTypeNormalGhost, m.maxHealthPoint, newPurpleVirusHealthPoint, m.speed*1.1,
 			m.locateX, m.locateY+float64(m.comeFromY*consts.SmallUnitPx), m.comeFromX, m.comeFromY)
 		AppendMonsterVector(revivedMonster)
-
 	} else if m.monsterType == consts.MonsterTypeZombie {
 		// Kill animal units around 50 px.
 		for indexAnimal := 0; indexAnimal < len(game.animalsContainer.animals); indexAnimal++ {
@@ -222,5 +220,4 @@ func (m *Monster) Deathrattle(game *Game) {
 			}
 		}
 	}
-
 }

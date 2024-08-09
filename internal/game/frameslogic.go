@@ -36,7 +36,7 @@ func (f *FramesLogicContainer) monsterMove(game *Game) {
 	for i := 0; i < len(game.monstersContainer.monsters); i++ {
 		monster := game.monstersContainer.monsters[i]
 
-		monster.SurvivalSkill()
+		monster.SurvivalSkill(game)
 
 		// Calculate the distance traveled
 		xDelta := math.Abs(monster.locateX - homeLocateX)
