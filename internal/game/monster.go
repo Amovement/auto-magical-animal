@@ -5,6 +5,7 @@ import (
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
 	"log"
+	"math"
 	"math/rand"
 	"time"
 )
@@ -107,7 +108,7 @@ func (m *MonstersContainer) CreateMonster() {
 		// hp * 10
 		newMonster.maxHealthPoint = monsterHealthPoint * 10
 		newMonster.healthPoint = monsterHealthPoint * 10
-		newMonster.speed = 0.1
+		newMonster.speed = 0.3
 	}
 	newMonster.monsterType = monsterTypeNow
 	newMonster.image = monsterImage[newMonster.monsterType]
@@ -177,14 +178,49 @@ func NewMonster(monsterType int, maxHealthPoint, healthPoint int, speed, locateX
 	}
 }
 
+// SurvivalSkill triggers when the monster is alive
 func (m *Monster) SurvivalSkill() {
+	if m.healthPoint <= 0 {
+		return
+	}
 	switch m.monsterType {
 	case consts.MonsterTypeBossUFO:
-		if tickRounds%5 == 0 && tick == 0 {
+		if tickRounds%3 == 0 && tick == 0 {
 			// Boss UFO every 3 tickRound generates a zombie elite monster
 			createdMonster := NewMonster(consts.MonsterTypeZombie, m.maxHealthPoint/10, tickRounds, 1,
 				m.locateX-float64(consts.SmallUnitPx*m.comeFromX), m.locateY-float64(consts.SmallUnitPx*m.comeFromY), m.comeFromX, m.comeFromY)
 			AppendMonsterVector(createdMonster)
 		}
 	}
+}
+
+// Deathrattle triggers when the monster dies
+func (m *Monster) Deathrattle(game *Game) {
+	if m.healthPoint > 0 {
+		return
+	}
+	// Deathrattle
+	if m.monsterType == consts.MonsterTypePurpleVirus {
+		// todo
+		// MonsterTypePurpleVirus skill need to be implemented
+		// Split into two small monsters, halving the maximum health points, less than 10 HP will die.
+		newPurpleVirusHealthPoint := m.maxHealthPoint / 2
+		revivedMonster := NewMonster(consts.MonsterTypeNormalGhost, m.maxHealthPoint, newPurpleVirusHealthPoint, m.speed*1.1,
+			m.locateX+float64(m.comeFromX*consts.SmallUnitPx), m.locateY, m.comeFromX, m.comeFromY)
+		AppendMonsterVector(revivedMonster)
+		revivedMonster = NewMonster(consts.MonsterTypeNormalGhost, m.maxHealthPoint, newPurpleVirusHealthPoint, m.speed*1.1,
+			m.locateX, m.locateY+float64(m.comeFromY*consts.SmallUnitPx), m.comeFromX, m.comeFromY)
+		AppendMonsterVector(revivedMonster)
+
+	} else if m.monsterType == consts.MonsterTypeZombie {
+		// Kill animal units around 50 px.
+		for indexAnimal := 0; indexAnimal < len(game.animalsContainer.animals); indexAnimal++ {
+			animal := game.animalsContainer.animals[indexAnimal]
+			if math.Abs(animal.locateX-m.locateX) <= 50 && math.Abs(animal.locateY-m.locateY) <= 50 {
+				animal.healthPoint = 0
+				game.animationContainer.AddAnimation(consts.AnimationTypePoison, 60*1.5, animal.locateX, animal.locateY)
+			}
+		}
+	}
+
 }

@@ -132,29 +132,7 @@ func (f *FramesLogicContainer) monstersBulletsCollision(game *Game) {
 		} else if monster.healthPoint <= 0 {
 			// Kill a monster will add score
 			score++
-			// Deathrattle
-			if monster.monsterType == consts.MonsterTypePurpleVirus {
-				// todo
-				// MonsterTypePurpleVirus skill need to be implemented
-				// Split into two small monsters, halving the maximum health points, less than 10 HP will die.
-				newPurpleVirusHealthPoint := monster.maxHealthPoint / 2
-				revivedMonster := NewMonster(consts.MonsterTypeNormalGhost, monster.maxHealthPoint, newPurpleVirusHealthPoint, monster.speed*1.1,
-					monster.locateX+float64(monster.comeFromX*consts.SmallUnitPx), monster.locateY, monster.comeFromX, monster.comeFromY)
-				AppendMonsterVector(revivedMonster)
-				revivedMonster = NewMonster(consts.MonsterTypeNormalGhost, monster.maxHealthPoint, newPurpleVirusHealthPoint, monster.speed*1.1,
-					monster.locateX, monster.locateY+float64(monster.comeFromY*consts.SmallUnitPx), monster.comeFromX, monster.comeFromY)
-				AppendMonsterVector(revivedMonster)
-
-			} else if monster.monsterType == consts.MonsterTypeZombie {
-				// Kill animal units around 50 px.
-				for indexAnimal := 0; indexAnimal < len(game.animalsContainer.animals); indexAnimal++ {
-					animal := game.animalsContainer.animals[indexAnimal]
-					if math.Abs(animal.locateX-monster.locateX) <= 50 && math.Abs(animal.locateY-monster.locateY) <= 50 {
-						animal.healthPoint = 0
-						game.animationContainer.AddAnimation(consts.AnimationTypePoison, 60*1.5, animal.locateX, animal.locateY)
-					}
-				}
-			}
+			monster.Deathrattle(game)
 		}
 	}
 	game.monstersContainer.monsters = newMonsters
