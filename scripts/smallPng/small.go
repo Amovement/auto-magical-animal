@@ -26,7 +26,7 @@ func main() {
 	}
 
 	// Set scale
-	newWidth := uint(15)   // New width
+	newWidth := uint(75)   // New width
 	newHeight := uint(600) // New height
 	// Here you can set the scale as needed, for example to maintain the aspect ratio
 	newHeight = uint(float64(srcImg.Bounds().Dy()) * float64(newWidth) / float64(srcImg.Bounds().Dx()))

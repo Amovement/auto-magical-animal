@@ -59,6 +59,7 @@ func (i *InfoContainer) UpdateAndClearExpiredInfo() {
 func (i *InfoContainer) Draw(screen *ebiten.Image) {
 	ebitenutil.DebugPrintAt(screen, "Your Score: "+fmt.Sprint(score), 0, 40)
 	ebitenutil.DebugPrintAt(screen, "History Max Score: "+fmt.Sprint(maxScore), 0, 60)
+	ebitenutil.DebugPrintAt(screen, "Boss coming after: "+fmt.Sprint(bossLastCreatedTickRound+90-tickRounds), 0, 80)
 
 	// show info boxes
 	if len(i.infoBoxes) > 0 {
@@ -101,7 +102,7 @@ func (i *InfoContainer) InitGameTips() {
 func (i *InfoContainer) GameOverTips() {
 	i.infoBoxes = append(i.infoBoxes, []*Info{
 		{
-			message:      "Game Over! Press `Space key` to restart.",
+			message:      "Game Over! Press `r` to restart.",
 			durationTick: 1,
 		},
 	}...)

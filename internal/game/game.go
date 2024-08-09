@@ -15,6 +15,7 @@ type Game struct {
 	bulletPresentContainer *BulletPresentContainer
 	framesLogicContainer   *FramesLogicContainer
 	infoContainer          *InfoContainer
+	animationContainer     *AnimationContainer
 }
 
 func (g *Game) Update() error {
@@ -26,13 +27,15 @@ func (g *Game) Update() error {
 		if gameStatus == consts.GameStatusEnd {
 			g.infoContainer.GameOverTips()
 		}
-		if ebiten.IsKeyPressed(ebiten.KeySpace) {
+		if ebiten.IsKeyPressed(ebiten.KeyR) {
 			// restart game
 			RestartGame(g)
 		} else {
 			return nil
 		}
 	}
+	// Animation update
+	g.animationContainer.UpdateAndClearExpiredAnimation()
 	// Cursor update
 	g.cursor.ListenMouseEvent()
 	// Weather update
@@ -52,6 +55,7 @@ func (g *Game) Draw(screen *ebiten.Image) {
 	g.home.Draw(screen)
 	g.animalsContainer.Draw(screen)
 	g.monstersContainer.Draw(screen)
+	g.animationContainer.Draw(screen)
 	g.bulletPresentContainer.Draw(screen)
 	g.cursor.Draw(screen)
 	g.infoContainer.Draw(screen)
@@ -71,6 +75,7 @@ func NewGame() *Game {
 		framesLogicContainer:   NewFramesLogicContainer(),
 		cursor:                 NewCursor(),
 		infoContainer:          NewInfoContainer(),
+		animationContainer:     NewAnimationContainer(),
 	}
 }
 
@@ -87,9 +92,11 @@ func RestartGame(g *Game) {
 	g.monstersContainer = NewMonstersContainer()
 	g.bulletPresentContainer = NewBulletPresentContainer()
 	g.infoContainer = NewInfoContainer()
+	g.animationContainer = NewAnimationContainer()
 	RestartGlobal()
 	ClearBulletVector()
 	ClearAnimalVector()
 	ClearInfoVector()
+	ClearMonsterVector()
 	g.infoContainer.InitGameTips()
 }

@@ -13,6 +13,8 @@ var (
 	bulletVector []*Bullet
 	// The animal queue generated under the current game frame
 	animalVector []*Animal
+	// The monster queue generated under the current game frame
+	monsterVector []*Monster
 	// The info queue generated under the current game frame
 	infoVector []*Info
 	// Weather type look `weather.go` for details
@@ -22,6 +24,8 @@ var (
 	score int
 	// maxScore records highest score in history
 	maxScore int
+	// bossLastCreatedTickRound records the last tick round when boss was created
+	bossLastCreatedTickRound int
 )
 
 func init() {
@@ -29,8 +33,10 @@ func init() {
 	tick = 0
 	tickRounds = 0
 	gameStatus = 0
+	bossLastCreatedTickRound = 0
 	bulletVector = []*Bullet{}
 	animalVector = []*Animal{}
+	monsterVector = []*Monster{}
 	infoVector = []*Info{}
 }
 
@@ -75,6 +81,14 @@ func AppendInfoVector(info ...*Info) {
 	infoVector = append(infoVector, info...)
 }
 
+func AppendMonsterVector(monster ...*Monster) {
+	monsterVector = append(monsterVector, monster...)
+}
+
+func ClearMonsterVector() {
+	monsterVector = []*Monster{}
+}
+
 func ClearInfoVector() {
 	infoVector = []*Info{}
 }
@@ -83,6 +97,7 @@ func ClearInfoVector() {
 func RestartGlobal() {
 	ClearBulletVector()
 	ClearAnimalVector()
+	bossLastCreatedTickRound = 0
 	tick = 0
 	tickRounds = 0
 	score = 20

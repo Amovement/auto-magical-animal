@@ -38,3 +38,6 @@ Version 0.0.1
 - 关卡设置?
 - 排行榜 rank
 - 双人成行 two player
+- 优化生成怪物概率的代码 需要一个怪物池
+- 怪物 struct 可优化为 interface
+- 存档功能 (急待实现)

@@ -23,6 +23,7 @@ func (f *FramesLogicContainer) Update(game *Game) {
 
 	f.addBulletInVector2PresentContainer(game)
 	f.addAnimalInVector2PresentContainer(game)
+	f.addMonsterInVector2PresentContainer(game)
 	f.addInfoInVector2InfoContainer(game)
 
 	f.bulletsMove(game)
@@ -35,6 +36,8 @@ func (f *FramesLogicContainer) monsterMove(game *Game) {
 	for i := 0; i < len(game.monstersContainer.monsters); i++ {
 		monster := game.monstersContainer.monsters[i]
 
+		monster.SurvivalSkill()
+
 		// Calculate the distance traveled
 		xDelta := math.Abs(monster.locateX - homeLocateX)
 		yDelta := math.Abs(monster.locateY - homeLocateY)
@@ -45,9 +48,9 @@ func (f *FramesLogicContainer) monsterMove(game *Game) {
 			SetGameStatus(consts.GameStatusEnd)
 			return
 		}
-		moveRate := 1.0
-		moveX := moveRate / localDistance * xDelta
-		moveY := moveRate / localDistance * yDelta
+		moveRate := monster.speed
+		moveX := (moveRate / localDistance) * xDelta
+		moveY := (moveRate / localDistance) * yDelta
 
 		// Updated monster move to Home
 		if monster.locateX < homeLocateX {
@@ -73,9 +76,6 @@ func (f *FramesLogicContainer) bulletsMove(game *Game) {
 		xDelta := math.Abs(bullet.locateX - bullet.TargetX)
 		yDelta := math.Abs(bullet.locateY - bullet.TargetY)
 		localDistance := math.Sqrt(xDelta*xDelta + yDelta*yDelta)
-		if localDistance <= 1 {
-			// If the gap is less than 1, bullet have reached target
-		}
 		moveRate := bullet.speed
 		moveX := moveRate / localDistance * xDelta
 		moveY := moveRate / localDistance * yDelta
@@ -123,7 +123,7 @@ func (f *FramesLogicContainer) monstersBulletsCollision(game *Game) {
 		}
 	}
 
-	// remove dead monsters
+	// remove dead monsters and trigger `Deathrattle`
 	var newMonsters []*Monster
 	for i := 0; i < len(game.monstersContainer.monsters); i++ {
 		monster := game.monstersContainer.monsters[i]
@@ -132,6 +132,29 @@ func (f *FramesLogicContainer) monstersBulletsCollision(game *Game) {
 		} else if monster.healthPoint <= 0 {
 			// Kill a monster will add score
 			score++
+			// Deathrattle
+			if monster.monsterType == consts.MonsterTypePurpleVirus {
+				// todo
+				// MonsterTypePurpleVirus skill need to be implemented
+				// Split into two small monsters, halving the maximum health points, less than 10 HP will die.
+				newPurpleVirusHealthPoint := monster.maxHealthPoint / 2
+				revivedMonster := NewMonster(consts.MonsterTypeNormalGhost, monster.maxHealthPoint, newPurpleVirusHealthPoint, monster.speed*1.1,
+					monster.locateX+float64(monster.comeFromX*consts.SmallUnitPx), monster.locateY, monster.comeFromX, monster.comeFromY)
+				AppendMonsterVector(revivedMonster)
+				revivedMonster = NewMonster(consts.MonsterTypeNormalGhost, monster.maxHealthPoint, newPurpleVirusHealthPoint, monster.speed*1.1,
+					monster.locateX, monster.locateY+float64(monster.comeFromY*consts.SmallUnitPx), monster.comeFromX, monster.comeFromY)
+				AppendMonsterVector(revivedMonster)
+
+			} else if monster.monsterType == consts.MonsterTypeZombie {
+				// Kill animal units around 50 px.
+				for indexAnimal := 0; indexAnimal < len(game.animalsContainer.animals); indexAnimal++ {
+					animal := game.animalsContainer.animals[indexAnimal]
+					if math.Abs(animal.locateX-monster.locateX) <= 50 && math.Abs(animal.locateY-monster.locateY) <= 50 {
+						animal.healthPoint = 0
+						game.animationContainer.AddAnimation(consts.AnimationTypePoison, 60*1.5, animal.locateX, animal.locateY)
+					}
+				}
+			}
 		}
 	}
 	game.monstersContainer.monsters = newMonsters
@@ -145,6 +168,16 @@ func (f *FramesLogicContainer) monstersBulletsCollision(game *Game) {
 		}
 	}
 	game.bulletPresentContainer.bullets = newBullets
+
+	// remove animals that health point is 0
+	var newAnimals []*Animal
+	for i := 0; i < len(game.animalsContainer.animals); i++ {
+		animal := game.animalsContainer.animals[i]
+		if animal.healthPoint > 0 {
+			newAnimals = append(newAnimals, animal)
+		}
+	}
+	game.animalsContainer.animals = newAnimals
 }
 
 // addBulletInVector2PresentContainer Add bullets to the bullet container
@@ -214,8 +247,11 @@ func (f *FramesLogicContainer) printGameLog(game *Game) {
 	//for i := 0; i < len(game.bulletPresentContainer.bullets); i++ {
 	//	fmt.Printf("bullets: %+v\n", game.bulletPresentContainer.bullets[i])
 	//}
-	for i := 0; i < len(bulletVector); i++ {
-		fmt.Printf("bulletVector: %+v\n", bulletVector[i])
+	//for i := 0; i < len(bulletVector); i++ {
+	//	fmt.Printf("bulletVector: %+v\n", bulletVector[i])
+	//}
+	for i := 0; i < len(monsterVector); i++ {
+		fmt.Printf("monsterVector: %+v\n", monsterVector[i])
 	}
 }
 
@@ -227,4 +263,14 @@ func (f *FramesLogicContainer) addInfoInVector2InfoContainer(game *Game) {
 		game.infoContainer.infoBoxes = append(game.infoContainer.infoBoxes, v)
 	}
 	ClearInfoVector()
+}
+
+func (f *FramesLogicContainer) addMonsterInVector2PresentContainer(game *Game) {
+	if game.monstersContainer.monsters == nil {
+		game.monstersContainer.monsters = []*Monster{}
+	}
+	for _, v := range monsterVector {
+		game.monstersContainer.monsters = append(game.monstersContainer.monsters, v)
+	}
+	ClearMonsterVector()
 }

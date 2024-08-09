@@ -22,6 +22,7 @@ type Animal struct {
 	bulletDamage int
 	// bullet speed
 	bulletSpeed float64
+	healthPoint int
 }
 
 type AnimalsContainer struct {
@@ -57,6 +58,7 @@ func NewAnimal(animalType int, locateX, locateY float64) *Animal {
 		animalType:          animalType,
 		lastAttackTime:      tick,
 		lastAttackTickRound: tickRounds,
+		healthPoint:         100,
 	}
 	if animal.animalType == consts.AnimalTypeByWeather {
 		animal.animalType = weatherType
@@ -70,12 +72,12 @@ func NewAnimal(animalType int, locateX, locateY float64) *Animal {
 	case consts.AnimalTypeFish:
 		animal.image = animalImageFish
 		animal.attackInterval = 90
-		animal.bulletDamage = 30
+		animal.bulletDamage = 60
 		animal.bulletSpeed = 5
 	case consts.AnimalTypePenguin:
 		animal.image = animalImagePenguin
-		animal.attackInterval = 120
-		animal.bulletDamage = 40
+		animal.attackInterval = 90
+		animal.bulletDamage = 120
 		animal.bulletSpeed = 5
 	}
 	return animal

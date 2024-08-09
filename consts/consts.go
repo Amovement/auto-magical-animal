@@ -7,7 +7,6 @@ const (
 	// Game resource address
 
 	HomeImage        = "https://s3.bmp.ovh/imgs/2024/08/02/3ed11e6d363cfbc4.png"
-	MonsterImage     = "https://s3.bmp.ovh/imgs/2024/08/02/21d9e687d9cff87d.png"
 	BulletImage      = "https://s3.bmp.ovh/imgs/2024/08/07/b329884e9e562b10.png"
 	CursorImage      = "https://s3.bmp.ovh/imgs/2024/08/05/2404d029c1889ec3.png"
 	WindowsIconImage = "https://s3.bmp.ovh/imgs/2024/08/02/ced70c73b509f81f.png"
@@ -28,6 +27,31 @@ const (
 
 	NegativeMaxInt = -1 << 63
 	MaxInt         = 1<<63 - 1
+)
+
+const (
+	// MonsterTypeNormalGhost normal monster
+	MonsterTypeNormalGhost = 0
+	// MonsterTypePurpleVirus Deathrattle: Split into two small monsters, halving the maximum health points, less than 10 HP will die.
+	//	紫色病毒 亡语: 分裂为两个小怪物, 减少最大血量一半, 不足 10 时彻底死亡
+	MonsterTypePurpleVirus = 1
+	// MonsterTypeZombie Deathrattle: Kill animal units around 50 px.
+	//	僵尸 亡语: 击杀 50 px 附近的动物单位
+	MonsterTypeZombie = 2
+	MonsterTypeKappa  = 3
+	// MonsterTypeBossUFO Boss UFO every 3 tickRound generates a zombie elite monster MonsterTypeZombie
+	//	Boss UFO 每 3 tickRound 生成一个精英僵尸怪物 MonsterTypeZombie
+	MonsterTypeBossUFO = 4
+)
+
+var (
+	MonsterImage = []string{
+		"https://s3.bmp.ovh/imgs/2024/08/02/21d9e687d9cff87d.png", // ghost
+		"https://s3.bmp.ovh/imgs/2024/08/08/416ff8227a235c8d.png", // Purple virus
+		"https://s3.bmp.ovh/imgs/2024/08/08/33e24322451b3cec.png", // Zombie
+		"https://s3.bmp.ovh/imgs/2024/08/08/c90f2f81cd55ce08.png", // Kappa 河童
+		"https://s3.bmp.ovh/imgs/2024/08/08/ddefef04522f2060.png", // Boss UFO
+	}
 )
 
 // weather
@@ -59,4 +83,14 @@ const (
 
 	AnimalTypePenguin  = 2
 	AnimalImagePenguin = "https://s3.bmp.ovh/imgs/2024/08/06/273e243c2c2cd1cf.png"
+)
+
+var (
+	AnimationImage = []string{
+		"https://s3.bmp.ovh/imgs/2024/08/08/be8f4d8c87cb5b34.png", // Poison animation
+	}
+)
+
+const (
+	AnimationTypePoison = 0
 )
