@@ -1,6 +1,8 @@
 package game
 
 import (
+	"bytes"
+	"github.com/Amovement/auto-magical-animal/assets"
 	"github.com/Amovement/auto-magical-animal/consts"
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
@@ -37,15 +39,15 @@ var (
 )
 
 func init() {
-	animalImageCat, errAnimalImage = ebitenutil.NewImageFromURL(consts.AnimalImageCat)
+	animalImageCat, _, errAnimalImage = ebitenutil.NewImageFromReader(bytes.NewReader(assets.AnimalImageCatBytes))
 	if errAnimalImage != nil {
 		panic(errAnimalImage)
 	}
-	animalImageFish, errAnimalImage = ebitenutil.NewImageFromURL(consts.AnimalImageFish)
+	animalImageFish, _, errAnimalImage = ebitenutil.NewImageFromReader(bytes.NewReader(assets.AnimalImageFishBytes))
 	if errAnimalImage != nil {
 		panic(errAnimalImage)
 	}
-	animalImagePenguin, errAnimalImage = ebitenutil.NewImageFromURL(consts.AnimalImagePenguin)
+	animalImagePenguin, _, errAnimalImage = ebitenutil.NewImageFromReader(bytes.NewReader(assets.AnimalImagePenguinBytes))
 	if errAnimalImage != nil {
 		panic(errAnimalImage)
 	}

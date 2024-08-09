@@ -1,6 +1,8 @@
 package game
 
 import (
+	"bytes"
+	"github.com/Amovement/auto-magical-animal/assets"
 	"github.com/Amovement/auto-magical-animal/consts"
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
@@ -32,7 +34,7 @@ type Home struct {
 }
 
 func NewHome() *Home {
-	homeImage, err := ebitenutil.NewImageFromURL(consts.HomeImage)
+	homeImage, _, err := ebitenutil.NewImageFromReader(bytes.NewReader(assets.HomeImageBytes))
 	if err != nil {
 		log.Panic(err)
 	}

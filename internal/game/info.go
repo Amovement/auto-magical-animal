@@ -1,7 +1,9 @@
 package game
 
 import (
+	"bytes"
 	"fmt"
+	"github.com/Amovement/auto-magical-animal/assets"
 	"github.com/Amovement/auto-magical-animal/consts"
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
@@ -30,7 +32,7 @@ var (
 )
 
 func init() {
-	infoContainerImage, errLoadInfoContainerImage = ebitenutil.NewImageFromURL(consts.InfoBoxImage)
+	infoContainerImage, _, errLoadInfoContainerImage = ebitenutil.NewImageFromReader(bytes.NewReader(assets.InfoBoxImageBytes))
 	if errLoadInfoContainerImage != nil {
 		log.Panic(errLoadInfoContainerImage)
 	}

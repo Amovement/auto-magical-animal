@@ -1,7 +1,8 @@
 package game
 
 import (
-	"github.com/Amovement/auto-magical-animal/consts"
+	"bytes"
+	"github.com/Amovement/auto-magical-animal/assets"
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
 )
@@ -27,7 +28,7 @@ var (
 )
 
 func init() {
-	bulletImage, errBulletImage = ebitenutil.NewImageFromURL(consts.BulletImage)
+	bulletImage, _, errBulletImage = ebitenutil.NewImageFromReader(bytes.NewReader(assets.BulletImageBytes))
 	if errBulletImage != nil {
 		panic(errBulletImage)
 	}

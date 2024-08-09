@@ -1,6 +1,8 @@
 package game
 
 import (
+	"bytes"
+	"github.com/Amovement/auto-magical-animal/assets"
 	"github.com/Amovement/auto-magical-animal/consts"
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
@@ -22,19 +24,19 @@ type Weather struct {
 
 func NewWeather() *Weather {
 	var images, backgroundImages []*ebiten.Image
-	weatherImage, _ := ebitenutil.NewImageFromURL(consts.WeatherSunnyImage)
+	weatherImage, _, _ := ebitenutil.NewImageFromReader(bytes.NewReader(assets.WeatherSunnyImageBytes))
 	images = append(images, weatherImage)
-	weatherImage, _ = ebitenutil.NewImageFromURL(consts.BackgroundImageSunny)
+	weatherImage, _, _ = ebitenutil.NewImageFromReader(bytes.NewReader(assets.BackgroundImageSunnyBytes))
 	backgroundImages = append(backgroundImages, weatherImage)
 
-	weatherImage, _ = ebitenutil.NewImageFromURL(consts.WeatherRainImage)
+	weatherImage, _, _ = ebitenutil.NewImageFromReader(bytes.NewReader(assets.WeatherRainImageBytes))
 	images = append(images, weatherImage)
-	weatherImage, _ = ebitenutil.NewImageFromURL(consts.BackgroundImageRain)
+	weatherImage, _, _ = ebitenutil.NewImageFromReader(bytes.NewReader(assets.BackgroundImageRainBytes))
 	backgroundImages = append(backgroundImages, weatherImage)
 
-	weatherImage, _ = ebitenutil.NewImageFromURL(consts.WeatherSnowImage)
+	weatherImage, _, _ = ebitenutil.NewImageFromReader(bytes.NewReader(assets.WeatherSnowImageBytes))
 	images = append(images, weatherImage)
-	weatherImage, _ = ebitenutil.NewImageFromURL(consts.BackgroundImageSnow)
+	weatherImage, _, _ = ebitenutil.NewImageFromReader(bytes.NewReader(assets.BackgroundImageSnowBytes))
 	backgroundImages = append(backgroundImages, weatherImage)
 
 	return &Weather{

@@ -1,6 +1,8 @@
 package game
 
 import (
+	"bytes"
+	"github.com/Amovement/auto-magical-animal/assets"
 	"github.com/Amovement/auto-magical-animal/consts"
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
@@ -34,7 +36,7 @@ var (
 
 func init() {
 	for i := 0; i < 5; i++ {
-		newImage, errLoadMonsterImage := ebitenutil.NewImageFromURL(consts.MonsterImage[i])
+		newImage, _, errLoadMonsterImage := ebitenutil.NewImageFromReader(bytes.NewReader(assets.MonsterImagesBytes[i]))
 		if errLoadMonsterImage != nil {
 			log.Panic(errLoadMonsterImage)
 		}

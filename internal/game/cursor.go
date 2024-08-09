@@ -1,6 +1,8 @@
 package game
 
 import (
+	"bytes"
+	"github.com/Amovement/auto-magical-animal/assets"
 	"github.com/Amovement/auto-magical-animal/consts"
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
@@ -14,7 +16,7 @@ type Cursor struct {
 }
 
 func NewCursor() *Cursor {
-	cursorImage, err := ebitenutil.NewImageFromURL(consts.CursorImage)
+	cursorImage, _, err := ebitenutil.NewImageFromReader(bytes.NewReader(assets.CursorImageBytes))
 	if err != nil {
 		log.Panic(err)
 	}
