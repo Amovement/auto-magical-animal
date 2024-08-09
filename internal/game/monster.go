@@ -180,12 +180,12 @@ func NewMonster(monsterType int, maxHealthPoint, healthPoint int, speed, locateX
 func (m *Monster) SurvivalSkill() {
 	switch m.monsterType {
 	case consts.MonsterTypeBossUFO:
-		if tickRounds%3 == 0 && tick == 0 {
+		if tickRounds%5 == 0 && tick == 0 {
 			// Boss UFO every 3 tickRound generates a zombie elite monster
-			createdMonster := NewMonster(consts.MonsterTypeZombie, m.maxHealthPoint/10, tickRounds, 1,
+			createdMonster := NewMonster(consts.MonsterTypePurpleVirus, m.maxHealthPoint/10, tickRounds, 1,
 				m.locateX-float64(consts.SmallUnitPx*m.comeFromX), m.locateY, m.comeFromX, m.comeFromY)
 			AppendMonsterVector(createdMonster)
-			createdMonster = NewMonster(consts.MonsterTypeZombie, m.maxHealthPoint/10, tickRounds, 1,
+			createdMonster = NewMonster(consts.MonsterTypePurpleVirus, m.maxHealthPoint/10, tickRounds, 1,
 				m.locateX, m.locateY-float64(consts.SmallUnitPx*m.comeFromY), m.comeFromX, m.comeFromY)
 			AppendMonsterVector(createdMonster)
 		}

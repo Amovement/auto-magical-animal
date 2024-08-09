@@ -2,6 +2,14 @@
 一个自娱自乐的小游戏.
 A little game to entertain myself.
 ## 游戏介绍 Game introduction
+Version 0.0.2
+- 提升了对抗的难度, 新增了三种不同的怪物, 并引入了一个 boss
+- Improved the difficulty of the confrontation, added three different monsters, and introduced a boss.
+- 调整了动物的战斗力, 增强企鹅和小鱼的伤害
+- Adjusted the fighting power of animals, increasing the damage of penguins and fish.
+- 这个版本似乎有点难度了.
+- This version seems a little difficult.
+
 Version 0.0.1
 - 一个勉强可以玩的版本但是仍很无聊
 - A barely playable version, but still boring.
