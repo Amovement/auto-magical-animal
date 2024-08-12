@@ -26,8 +26,8 @@ func (f *FramesLogicContainer) Update(game *Game) {
 	f.addMonsterInVector2PresentContainer(game)
 	f.addInfoInVector2InfoContainer(game)
 
-	f.bulletsMove(game)
 	f.monstersBulletsCollision(game)
+	f.bulletsMove(game)
 	f.monsterMove(game)
 }
 
@@ -35,8 +35,6 @@ func (f *FramesLogicContainer) monsterMove(game *Game) {
 	// The monster moves Home
 	for i := 0; i < len(game.monstersContainer.monsters); i++ {
 		monster := game.monstersContainer.monsters[i]
-
-		monster.SurvivalSkill(game)
 
 		// Calculate the distance traveled
 		xDelta := math.Abs(monster.locateX - homeLocateX)
@@ -65,6 +63,9 @@ func (f *FramesLogicContainer) monsterMove(game *Game) {
 		if monster.locateY > homeLocateY {
 			monster.locateY -= moveY
 		}
+
+		monster.SurvivalSkill(game)
+		monster.MonsterAnimation(game)
 	}
 }
 
@@ -103,9 +104,7 @@ func (f *FramesLogicContainer) monstersBulletsCollision(game *Game) {
 		bullet := game.bulletPresentContainer.bullets[i]
 		for j := 0; j < len(game.monstersContainer.monsters); j++ {
 			monster := game.monstersContainer.monsters[j]
-			xDelta := math.Abs(bullet.locateX - monster.locateX)
-			yDelta := math.Abs(bullet.locateY - monster.locateY)
-			if xDelta <= consts.SmallUnitPx && yDelta <= consts.SmallUnitPx {
+			if f.checkCollision(monster, bullet) {
 				// hit
 				monster.healthPoint -= bullet.damage
 				// set this bullet speed to 0
@@ -156,6 +155,20 @@ func (f *FramesLogicContainer) monstersBulletsCollision(game *Game) {
 		}
 	}
 	game.animalsContainer.animals = newAnimals
+}
+
+// checkCollision Check if the bullet hit the monster
+func (f *FramesLogicContainer) checkCollision(m *Monster, b *Bullet) bool {
+	monsterX1 := m.locateX - 10
+	monsterY1 := m.locateY - 10
+	monsterX2 := m.locateX + m.collisionSizeX + 10
+	monsterY2 := m.locateY + m.collisionSizeY + 10
+	bulletX1 := b.locateX
+	bulletY1 := b.locateY
+	if bulletX1 >= monsterX1 && bulletX1 <= monsterX2 && bulletY1 >= monsterY1 && bulletY1 <= monsterY2 {
+		return true
+	}
+	return false
 }
 
 // addBulletInVector2PresentContainer Add bullets to the bullet container

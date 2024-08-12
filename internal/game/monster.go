@@ -25,9 +25,11 @@ type Monster struct {
 	// comeFromX is the positive or negative x-coordinate of the monster spawn point with respect to home
 	comeFromX int
 	// comeFromY is the positive or negative y-coordinate of the monster spawn point with respect to home
-	comeFromY   int
-	monsterType int
-	speed       float64
+	comeFromY      int
+	monsterType    int
+	speed          float64
+	collisionSizeX float64
+	collisionSizeY float64
 }
 
 var (
@@ -75,7 +77,9 @@ func (m *MonstersContainer) CreateMonster() {
 	// create a monster every second
 	rand.Seed(time.Now().UnixNano())
 	newMonster := &Monster{
-		speed: 1.0,
+		speed:          1.0,
+		collisionSizeX: consts.SmallUnitPx,
+		collisionSizeY: consts.SmallUnitPx,
 	}
 
 	// hp
@@ -111,6 +115,9 @@ func (m *MonstersContainer) CreateMonster() {
 		newMonster.maxHealthPoint = monsterHealthPoint * 10
 		newMonster.healthPoint = monsterHealthPoint * 10
 		newMonster.speed = 0.3
+		// boss Size * 3
+		newMonster.collisionSizeX = consts.SmallUnitPx * 3
+		newMonster.collisionSizeY = consts.SmallUnitPx * 3
 	}
 	newMonster.monsterType = monsterTypeNow
 	newMonster.image = monsterImage[newMonster.monsterType]
@@ -216,10 +223,28 @@ func (m *Monster) Deathrattle(game *Game) {
 		// Kill animal units around 50 px.
 		for indexAnimal := 0; indexAnimal < len(game.animalsContainer.animals); indexAnimal++ {
 			animal := game.animalsContainer.animals[indexAnimal]
-			if math.Abs(animal.locateX-m.locateX) <= 50 && math.Abs(animal.locateY-m.locateY) <= 50 {
+			if math.Abs(animal.locateX-m.locateX) <= consts.SmallUnitPx*2 && math.Abs(animal.locateY-m.locateY) <= consts.SmallUnitPx*2 {
 				animal.healthPoint = 0
 				game.animationContainer.AddAnimation(consts.AnimationTypePoison, 60*1.5, animal.locateX, animal.locateY)
 			}
 		}
 	}
+}
+
+// MonsterAnimation shows monster animation every tickRounds
+func (m *Monster) MonsterAnimation(game *Game) {
+	if m.monsterType == consts.MonsterTypeZombie {
+		if tickRounds%3 == 0 && tick == 0 {
+			dxArr := []int{1, -1, 0}
+			dyArr := []int{1, -1, 0}
+			for i := 0; i < 3; i++ {
+				for j := 0; j < 3; j++ {
+					dx := dxArr[i] * consts.SmallUnitPx
+					dy := dyArr[j] * consts.SmallUnitPx
+					game.animationContainer.AddAnimation(consts.AnimationTypePoison, 60*1.5, m.locateX+float64(dx), m.locateY+float64(dy))
+				}
+			}
+		}
+	}
+
 }
