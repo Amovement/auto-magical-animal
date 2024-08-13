@@ -26,7 +26,7 @@ import (
 var (
 	inputFilename  = flag.String("input", "input.png", "input filename")
 	outputFilename = flag.String("output", "output.go", "output filename")
-	packageName    = flag.String("package", "assets", "package name")
+	packageName    = flag.String("package", "main", "package name")
 	varName        = flag.String("var", "_", "variable name")
 	compress       = flag.Bool("compress", false, "use gzip compression")
 	buildTags      = flag.String("buildtags", "", "build tags")

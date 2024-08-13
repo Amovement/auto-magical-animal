@@ -1,5 +1,11 @@
 package consts
 
+import (
+	"github.com/hajimehoshi/ebiten/v2"
+	"image"
+	"image/color"
+)
+
 const (
 	GameWidth  = 640
 	GameHeight = 640
@@ -24,13 +30,15 @@ const (
 const (
 	// MonsterTypeNormalGhost normal monster
 	MonsterTypeNormalGhost = 0
-	// MonsterTypePurpleVirus Deathrattle: Split into two small monsters, halving the maximum health points, less than 10 HP will die.
-	//	紫色病毒 亡语: 分裂为两个小怪物, 减少最大血量一半, 不足 10 时彻底死亡
+	// MonsterTypePurpleVirus Deathrattle: Split into two small monsters
+	//	紫色病毒 亡语: 分裂为两个小怪物
 	MonsterTypePurpleVirus = 1
 	// MonsterTypeZombie Deathrattle: Kill animal units around 50 px.
 	//	僵尸 亡语: 击杀 50 px 附近的动物单位
 	MonsterTypeZombie = 2
-	MonsterTypeKappa  = 3
+	// MonsterTypeKappa Kappa will use a hook to pull the nearest small animal. Kappa will restore 15 health when hit, but only the health of a normal monster.
+	//	河童 使用钩子拉取最近的小动物 河童将会在受伤时恢复 15 点生命，但是生命值仅为普通怪物的血量
+	MonsterTypeKappa = 3
 	// MonsterTypeBossUFO Boss UFO every 3 tickRound generates a zombie elite monster MonsterTypeZombie
 	//	Boss UFO 每 3 tickRound 生成一个精英僵尸怪物 MonsterTypeZombie
 	MonsterTypeBossUFO = 4
@@ -55,5 +63,18 @@ const (
 )
 
 const (
-	AnimationTypePoison = 0
+	AnimationTypePoison     = 0
+	AnimationTypeGreenHeart = 1
 )
+
+var (
+	WhiteImage    *ebiten.Image
+	WhiteSubImage *ebiten.Image
+	ColorRed      = color.RGBA{R: 255, G: 0, B: 0, A: 255}
+)
+
+func init() {
+	WhiteImage = ebiten.NewImage(3, 3)
+	WhiteImage.Fill(color.White)
+	WhiteSubImage = WhiteImage.SubImage(image.Rect(1, 1, 2, 2)).(*ebiten.Image)
+}

@@ -37,8 +37,8 @@ func (f *FramesLogicContainer) monsterMove(game *Game) {
 		monster := game.monstersContainer.monsters[i]
 
 		// Calculate the distance traveled
-		xDelta := math.Abs(monster.locateX - homeLocateX)
-		yDelta := math.Abs(monster.locateY - homeLocateY)
+		xDelta := homeLocateX - monster.locateX
+		yDelta := homeLocateY - monster.locateY
 		localDistance := math.Sqrt(xDelta*xDelta + yDelta*yDelta)
 		if localDistance <= 1 {
 			// If the gap is less than 1, you have reached Home
@@ -51,18 +51,8 @@ func (f *FramesLogicContainer) monsterMove(game *Game) {
 		moveY := (moveRate / localDistance) * yDelta
 
 		// Updated monster move to Home
-		if monster.locateX < homeLocateX {
-			monster.locateX += moveX
-		}
-		if monster.locateX > homeLocateX {
-			monster.locateX -= moveX
-		}
-		if monster.locateY < homeLocateY {
-			monster.locateY += moveY
-		}
-		if monster.locateY > homeLocateY {
-			monster.locateY -= moveY
-		}
+		monster.locateX += moveX
+		monster.locateY += moveY
 
 		monster.SurvivalSkill(game)
 		monster.MonsterAnimation(game)
@@ -107,6 +97,7 @@ func (f *FramesLogicContainer) monstersBulletsCollision(game *Game) {
 			if f.checkCollision(monster, bullet) {
 				// hit
 				monster.healthPoint -= bullet.damage
+				monster.SkillsWhenInjured(game)
 				// set this bullet speed to 0
 				// then remove the bullet at a later stage
 				bullet.speed = 0
@@ -188,7 +179,7 @@ func (f *FramesLogicContainer) addBulletInVector2PresentContainer(game *Game) {
 	ClearBulletVector()
 }
 
-// findNearestMonster help the `bullet without a target` find the nearest monster
+// findNearestMonster help someone find the nearest monster
 func (f *FramesLogicContainer) findNearestMonster(localX, localY float64, monsters []*Monster) (float64, float64) {
 	minDistance := float64(consts.MaxInt)
 	targetX, targetY := float64(consts.NegativeMaxInt), float64(consts.NegativeMaxInt)

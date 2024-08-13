@@ -165,3 +165,8 @@ func (ani *Animal) SurvivalSkill() {
 		AppendBulletVector(bullets...)
 	}
 }
+
+func (ani *Animal) AnimalMove(dx, dy float64) {
+	ani.locateX += dx
+	ani.locateY += dy
+}

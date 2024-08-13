@@ -6,6 +6,7 @@ import (
 	"github.com/Amovement/auto-magical-animal/consts"
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
+	"image/color"
 	"log"
 	"math"
 	"math/rand"
@@ -34,6 +35,9 @@ type Monster struct {
 
 var (
 	monsterImage []*ebiten.Image
+
+	// monsterCreateArr is the array of monster type to create
+	monsterCreateArr []int
 )
 
 func init() {
@@ -43,6 +47,15 @@ func init() {
 			log.Panic(errLoadMonsterImage)
 		}
 		monsterImage = append(monsterImage, newImage)
+	}
+
+	for i := 1; i <= 90; i++ {
+		monsterCreateArr = append(monsterCreateArr, consts.MonsterTypeNormalGhost)
+	}
+	for i := 1; i <= 3; i++ {
+		monsterCreateArr = append(monsterCreateArr, consts.MonsterTypePurpleVirus)
+		monsterCreateArr = append(monsterCreateArr, consts.MonsterTypeZombie)
+		monsterCreateArr = append(monsterCreateArr, consts.MonsterTypeKappa)
 	}
 }
 
@@ -89,20 +102,12 @@ func (m *MonstersContainer) CreateMonster() {
 	newMonster.maxHealthPoint = monsterHealthPoint
 	newMonster.healthPoint = monsterHealthPoint
 	// type
-	monsterTypeRand := rand.Intn(100)
-	var monsterTypeNow int
-	if monsterTypeRand < 90 {
+	monsterTypeRand := rand.Intn(len(monsterCreateArr))
+	monsterTypeNow := monsterCreateArr[monsterTypeRand]
+	if monsterTypeNow == consts.MonsterTypeNormalGhost || monsterTypeNow == consts.MonsterTypeKappa {
 		// normal monster
-		monsterTypeNow = consts.MonsterTypeNormalGhost
-	} else if monsterTypeRand >= 90 && monsterTypeRand < 95 {
+	} else if monsterTypeNow == consts.MonsterTypePurpleVirus || monsterTypeNow == consts.MonsterTypeZombie {
 		// elite monster
-		monsterTypeNow = consts.MonsterTypePurpleVirus
-		// double hp
-		newMonster.maxHealthPoint = monsterHealthPoint * 2
-		newMonster.healthPoint = monsterHealthPoint * 2
-	} else if monsterTypeRand >= 95 && monsterTypeRand < 100 {
-		// elite monster
-		monsterTypeNow = consts.MonsterTypeZombie
 		// double hp
 		newMonster.maxHealthPoint = monsterHealthPoint * 2
 		newMonster.healthPoint = monsterHealthPoint * 2
@@ -187,6 +192,22 @@ func NewMonster(monsterType int, maxHealthPoint, healthPoint int, speed, locateX
 	}
 }
 
+// SkillsWhenInjured triggers when the monster get injured
+//
+//	受伤时触发
+func (m *Monster) SkillsWhenInjured(game *Game) {
+	if m.healthPoint <= 0 {
+		return
+	}
+	switch m.monsterType {
+	case consts.MonsterTypeKappa:
+		m.healthPoint = m.healthPoint + 15
+		game.animationContainer.AddAnimation(consts.AnimationTypeGreenHeart, consts.TimeInterval*0.1, m.locateX, m.locateY)
+		game.animationContainer.AddAnimation(consts.AnimationTypeGreenHeart, consts.TimeInterval*0.5, m.locateX+consts.SmallUnitPx, m.locateY)
+		game.animationContainer.AddAnimation(consts.AnimationTypeGreenHeart, consts.TimeInterval*0.3, m.locateX+consts.SmallUnitPx/2, m.locateY+consts.SmallUnitPx/2)
+	}
+}
+
 // SurvivalSkill triggers when the monster is alive
 func (m *Monster) SurvivalSkill(game *Game) {
 	if m.healthPoint <= 0 {
@@ -200,6 +221,21 @@ func (m *Monster) SurvivalSkill(game *Game) {
 				m.locateX-float64(consts.SmallUnitPx*m.comeFromX), m.locateY-float64(consts.SmallUnitPx*m.comeFromY), m.comeFromX, m.comeFromY)
 			AppendMonsterVector(createdMonster)
 		}
+	case consts.MonsterTypeKappa:
+		animalNearest := m.findFarAnimal(game.animalsContainer.animals)
+		if animalNearest == nil {
+			return
+		}
+		// Calculate the distance traveled
+		xDelta := m.locateX - animalNearest.locateX
+		yDelta := m.locateY - animalNearest.locateY
+		localDistance := math.Sqrt(xDelta*xDelta + yDelta*yDelta)
+		moveRate := 1.0
+		moveX := (moveRate / localDistance) * xDelta
+		moveY := (moveRate / localDistance) * yDelta
+		animalNearest.AnimalMove(moveX, moveY)
+		game.animationContainer.drawLine(m.locateX+consts.SmallUnitPx/2, m.locateY+consts.SmallUnitPx/2, animalNearest.locateX+consts.SmallUnitPx/2, animalNearest.locateY+consts.SmallUnitPx/2,
+			3, color.Black, 1)
 	}
 }
 
@@ -210,8 +246,8 @@ func (m *Monster) Deathrattle(game *Game) {
 	}
 	// Deathrattle
 	if m.monsterType == consts.MonsterTypePurpleVirus {
-		// MonsterTypePurpleVirus skill need to be implemented
-		// Split into two small monsters, halving the maximum health points, less than 10 HP will die.
+		// MonsterTypePurpleVirus
+		// Split into two small monsters
 		newPurpleVirusHealthPoint := m.maxHealthPoint / 2
 		revivedMonster := NewMonster(consts.MonsterTypeNormalGhost, m.maxHealthPoint, newPurpleVirusHealthPoint, m.speed*1.1,
 			m.locateX+float64(m.comeFromX*consts.SmallUnitPx), m.locateY, m.comeFromX, m.comeFromY)
@@ -225,7 +261,7 @@ func (m *Monster) Deathrattle(game *Game) {
 			animal := game.animalsContainer.animals[indexAnimal]
 			if math.Abs(animal.locateX-m.locateX) <= consts.SmallUnitPx*2 && math.Abs(animal.locateY-m.locateY) <= consts.SmallUnitPx*2 {
 				animal.healthPoint = 0
-				game.animationContainer.AddAnimation(consts.AnimationTypePoison, 60*1.5, animal.locateX, animal.locateY)
+				game.animationContainer.AddAnimation(consts.AnimationTypePoison, consts.TimeInterval*1.5, animal.locateX, animal.locateY)
 			}
 		}
 	}
@@ -241,10 +277,47 @@ func (m *Monster) MonsterAnimation(game *Game) {
 				for j := 0; j < 3; j++ {
 					dx := dxArr[i] * consts.SmallUnitPx
 					dy := dyArr[j] * consts.SmallUnitPx
-					game.animationContainer.AddAnimation(consts.AnimationTypePoison, 60*1.5, m.locateX+float64(dx), m.locateY+float64(dy))
+					game.animationContainer.AddAnimation(consts.AnimationTypePoison, consts.TimeInterval*1.5, m.locateX+float64(dx), m.locateY+float64(dy))
 				}
 			}
 		}
 	}
+}
 
+// findNearestAnimal help someone find the nearest animal
+func (m *Monster) findNearestAnimal(animals []*Animal) *Animal {
+	if len(animals) == 0 {
+		return nil
+	}
+	minDistance := float64(consts.MaxInt)
+	targetIndex := 0
+	for index, animal := range animals {
+		xDelta := math.Abs(animal.locateX - m.locateX)
+		yDelta := math.Abs(animal.locateY - m.locateX)
+		localDistance := math.Sqrt(xDelta*xDelta + yDelta*yDelta)
+		if localDistance < minDistance {
+			minDistance = localDistance
+			targetIndex = index
+		}
+	}
+	return animals[targetIndex]
+}
+
+// findFarAnimal help someone find the farthest animal
+func (m *Monster) findFarAnimal(animals []*Animal) *Animal {
+	if len(animals) == 0 {
+		return nil
+	}
+	maxDistance := 0.0
+	targetIndex := 0
+	for index, animal := range animals {
+		xDelta := math.Abs(animal.locateX - m.locateX)
+		yDelta := math.Abs(animal.locateY - m.locateX)
+		localDistance := math.Sqrt(xDelta*xDelta + yDelta*yDelta)
+		if localDistance > maxDistance {
+			maxDistance = localDistance
+			targetIndex = index
+		}
+	}
+	return animals[targetIndex]
 }

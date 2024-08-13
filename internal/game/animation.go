@@ -5,11 +5,16 @@ import (
 	"github.com/Amovement/auto-magical-animal/assets"
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
+	"github.com/hajimehoshi/ebiten/v2/vector"
+	"image/color"
 	"log"
 )
 
 type AnimationContainer struct {
+	vertices       []ebiten.Vertex
+	indices        []uint16
 	animationBoxes []*Animation
+	Lines          []*Line
 }
 
 type Animation struct {
@@ -19,12 +24,19 @@ type Animation struct {
 	locationY    float64
 }
 
+type Line struct {
+	c0x, c0y, c1x, c1y float32
+	r                  float32
+	color              color.Color
+	durationTick       int
+}
+
 var (
 	animationImages []*ebiten.Image
 )
 
 func init() {
-	for i := 0; i < 1; i++ {
+	for i := 0; i < 2; i++ {
 		newImage, _, errLoad := ebitenutil.NewImageFromReader(bytes.NewReader(assets.AnimationImagesBytes[i]))
 		if errLoad != nil {
 			log.Panic(errLoad)
@@ -48,6 +60,15 @@ func (an *AnimationContainer) UpdateAndClearExpiredAnimation() {
 		}
 	}
 	an.animationBoxes = newAnimationBoxes
+
+	var newLines []*Line
+	for index := range an.Lines {
+		an.Lines[index].durationTick--
+		if an.Lines[index].durationTick > 0 {
+			newLines = append(newLines, an.Lines[index])
+		}
+	}
+	an.Lines = newLines
 }
 
 func (an *AnimationContainer) Draw(screen *ebiten.Image) {
@@ -59,6 +80,10 @@ func (an *AnimationContainer) Draw(screen *ebiten.Image) {
 			animation.image,
 			option,
 		)
+	}
+
+	for _, line := range an.Lines {
+		vector.StrokeLine(screen, line.c0x, line.c0y, line.c1x, line.c1y, line.r, line.color, true)
 	}
 }
 
@@ -73,4 +98,16 @@ func NewAnimation(image *ebiten.Image, durationTick int, locationX, locationY fl
 
 func (an *AnimationContainer) AddAnimation(animationType int, durationTick int, locationX, locationY float64) {
 	an.animationBoxes = append(an.animationBoxes, NewAnimation(animationImages[animationType], durationTick, locationX, locationY))
+}
+
+func (an *AnimationContainer) drawLine(c0x, c0y, c1x, c1y, r float64, color color.Color, tick int) {
+	an.Lines = append(an.Lines, &Line{
+		c0x:          float32(c0x),
+		c0y:          float32(c0y),
+		c1x:          float32(c1x),
+		c1y:          float32(c1y),
+		r:            float32(r),
+		color:        color,
+		durationTick: tick,
+	})
 }
