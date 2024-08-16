@@ -35,10 +35,10 @@
 - 非常感谢. thank you very much. どうもありがとうございました.
 
 # 动物图鉴 Animal Guide
-- https://github.com/Amovement/auto-magical-animal/wiki/Animal-guide
+- [Click me](https://github.com/Amovement/auto-magical-animal/wiki/Animal%E2%80%90guide)
 
 # 更新日志 Update log
-- https://github.com/Amovement/auto-magical-animal/wiki/Version-upgrade-Description
+- [Click me](https://github.com/Amovement/auto-magical-animal/wiki/Version-upgrade-Description)
 
 # Todo
-- https://github.com/Amovement/auto-magical-animal/wiki/Todo
+- [Click me](https://github.com/Amovement/auto-magical-animal/wiki/Todo)
