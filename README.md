@@ -34,8 +34,11 @@
 - https://dotown.maeda-design-room.net/
 - 非常感谢. thank you very much. どうもありがとうございました.
 
+# 动物图鉴 Animal Guide
+- https://github.com/Amovement/auto-magical-animal/wiki/Animal-guide
+
 # 更新日志 Update log
-- https://github.com/Amovement/auto-magical-animal/tree/main/wiki/updatelog.md
+- https://github.com/Amovement/auto-magical-animal/wiki/Version-upgrade-Description
 
 # Todo
-- https://github.com/Amovement/auto-magical-animal/tree/main/wiki/todo.md
+- https://github.com/Amovement/auto-magical-animal/wiki/Todo
