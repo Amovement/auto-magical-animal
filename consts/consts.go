@@ -60,11 +60,15 @@ const (
 	AnimalTypeCat       = 0
 	AnimalTypeFish      = 1
 	AnimalTypePenguin   = 2
+	AnimalTypeCactus    = 3
+	AnimalTypeMonkey    = 4
+	AnimalTypeHorse     = 5
 )
 
 const (
 	AnimationTypePoison     = 0
 	AnimationTypeGreenHeart = 1
+	AnimationTypeFire       = 2
 )
 
 var (

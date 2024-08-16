@@ -26,9 +26,33 @@ func (f *FramesLogicContainer) Update(game *Game) {
 	f.addMonsterInVector2PresentContainer(game)
 	f.addInfoInVector2InfoContainer(game)
 
+	f.animalMoveAndSkill(game)
 	f.monstersBulletsCollision(game)
 	f.bulletsMove(game)
 	f.monsterMove(game)
+}
+
+func (f *FramesLogicContainer) animalMoveAndSkill(game *Game) {
+	for i := 0; i < len(game.animalsContainer.animals); i++ {
+		animal := game.animalsContainer.animals[i]
+
+		if animal.moveSpeed != 0.0 {
+			animal.SurvivalMove(game)
+		}
+
+		var attackInterval int
+		if animal.lastAttackTickRound < tickRounds {
+			attackInterval = tick + (consts.TimeInterval - animal.lastAttackTime) + consts.TimeInterval*(tickRounds-animal.lastAttackTickRound)
+		} else {
+			attackInterval = tick - animal.lastAttackTime
+		}
+		// A bullet can be fired if the interval is greater than the attack interval
+		if attackInterval >= animal.attackInterval {
+			animal.lastAttackTime = tick
+			animal.lastAttackTickRound = tickRounds
+			animal.SurvivalSkill(game)
+		}
+	}
 }
 
 func (f *FramesLogicContainer) monsterMove(game *Game) {

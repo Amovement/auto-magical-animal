@@ -36,7 +36,7 @@ var (
 )
 
 func init() {
-	for i := 0; i < 2; i++ {
+	for i := 0; i < 3; i++ {
 		newImage, _, errLoad := ebitenutil.NewImageFromReader(bytes.NewReader(assets.AnimationImagesBytes[i]))
 		if errLoad != nil {
 			log.Panic(errLoad)

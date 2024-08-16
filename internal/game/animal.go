@@ -7,6 +7,8 @@ import (
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
 	"log"
+	"math"
+	"math/rand"
 )
 
 type Animal struct {
@@ -25,6 +27,7 @@ type Animal struct {
 	// bullet speed
 	bulletSpeed float64
 	healthPoint int
+	moveSpeed   float64
 }
 
 type AnimalsContainer struct {
@@ -32,24 +35,33 @@ type AnimalsContainer struct {
 }
 
 var (
-	errAnimalImage     error
-	animalImageCat     *ebiten.Image
-	animalImageFish    *ebiten.Image
-	animalImagePenguin *ebiten.Image
+	animalImagesArr     []*ebiten.Image
+	weatherAnimalsArray [][]int
 )
 
 func init() {
-	animalImageCat, _, errAnimalImage = ebitenutil.NewImageFromReader(bytes.NewReader(assets.AnimalImageCatBytes))
-	if errAnimalImage != nil {
-		panic(errAnimalImage)
+	for index := 0; index < 6; index++ {
+		animalImage, _, err := ebitenutil.NewImageFromReader(bytes.NewReader(assets.AnimalImagesBytes[index]))
+		if err != nil {
+			log.Panic(err)
+		}
+		animalImagesArr = append(animalImagesArr, animalImage)
 	}
-	animalImageFish, _, errAnimalImage = ebitenutil.NewImageFromReader(bytes.NewReader(assets.AnimalImageFishBytes))
-	if errAnimalImage != nil {
-		panic(errAnimalImage)
-	}
-	animalImagePenguin, _, errAnimalImage = ebitenutil.NewImageFromReader(bytes.NewReader(assets.AnimalImagePenguinBytes))
-	if errAnimalImage != nil {
-		panic(errAnimalImage)
+
+	for index := 0; index < 3; index++ {
+		weatherAnimalsArray = append(weatherAnimalsArray, []int{})
+		if index == consts.WeatherSunnyType {
+			weatherAnimalsArray[index] = append(weatherAnimalsArray[index], consts.AnimalTypeMonkey)
+			weatherAnimalsArray[index] = append(weatherAnimalsArray[index], consts.AnimalTypeCat)
+		}
+		if index == consts.WeatherRainType {
+			weatherAnimalsArray[index] = append(weatherAnimalsArray[index], consts.AnimalTypeFish)
+			weatherAnimalsArray[index] = append(weatherAnimalsArray[index], consts.AnimalTypeCactus)
+		}
+		if index == consts.WeatherSnowType {
+			weatherAnimalsArray[index] = append(weatherAnimalsArray[index], consts.AnimalTypePenguin)
+			weatherAnimalsArray[index] = append(weatherAnimalsArray[index], consts.AnimalTypeHorse)
+		}
 	}
 }
 
@@ -63,24 +75,49 @@ func NewAnimal(animalType int, locateX, locateY float64) *Animal {
 		healthPoint:         100,
 	}
 	if animal.animalType == consts.AnimalTypeByWeather {
-		animal.animalType = weatherType
+		if len(weatherAnimalsArray[weatherType]) >= numberKeyPress && numberKeyPress > 0 {
+			animal.animalType = weatherAnimalsArray[weatherType][numberKeyPress-1]
+		} else {
+			animal.animalType = weatherAnimalsArray[weatherType][0]
+		}
 	}
 	switch animal.animalType {
 	case consts.AnimalTypeCat:
-		animal.image = animalImageCat
+		animal.image = animalImagesArr[consts.AnimalTypeCat]
 		animal.attackInterval = 30
 		animal.bulletDamage = 10
 		animal.bulletSpeed = 5
 	case consts.AnimalTypeFish:
-		animal.image = animalImageFish
+		animal.image = animalImagesArr[consts.AnimalTypeFish]
 		animal.attackInterval = 90
 		animal.bulletDamage = 60
 		animal.bulletSpeed = 5
 	case consts.AnimalTypePenguin:
-		animal.image = animalImagePenguin
+		animal.image = animalImagesArr[consts.AnimalTypePenguin]
 		animal.attackInterval = 90
 		animal.bulletDamage = 120
 		animal.bulletSpeed = 5
+	case consts.AnimalTypeCactus:
+		animal.image = animalImagesArr[consts.AnimalTypeCactus]
+		animal.attackInterval = 45
+		animal.bulletDamage = 60
+		animal.bulletSpeed = 5
+	case consts.AnimalTypeMonkey:
+		animal.image = animalImagesArr[consts.AnimalTypeMonkey]
+		animal.attackInterval = 90
+		animal.bulletDamage = 120
+		randSpeed := rand.Float64() * 5
+		animal.moveSpeed = randSpeed
+		if animal.moveSpeed < 2 {
+			animal.moveSpeed += 2
+		}
+		animal.bulletSpeed = 5
+	case consts.AnimalTypeHorse:
+		animal.image = animalImagesArr[consts.AnimalTypeHorse]
+		animal.attackInterval = 10
+		animal.bulletDamage = 10000
+		animal.bulletSpeed = 5
+		animal.moveSpeed = 2
 	}
 	return animal
 }
@@ -107,25 +144,24 @@ func (ac *AnimalsContainer) Draw(screen *ebiten.Image) {
 	}
 }
 
-// Update animals fire
-func (ac *AnimalsContainer) Update() {
-	for index, animal := range ac.animals {
-		var attackInterval int
-		if animal.lastAttackTickRound < tickRounds {
-			attackInterval = tick + (consts.TimeInterval - animal.lastAttackTime) + consts.TimeInterval*(tickRounds-animal.lastAttackTickRound)
-		} else {
-			attackInterval = tick - animal.lastAttackTime
+func (ani *Animal) SurvivalMove(game *Game) {
+	if ani.animalType == consts.AnimalTypeMonkey || ani.animalType == consts.AnimalTypeHorse {
+		monsterNearest := ani.findNearestMonster(game.monstersContainer.monsters)
+		if monsterNearest == nil {
+			return
 		}
-		// A bullet can be fired if the interval is greater than the attack interval
-		if attackInterval >= animal.attackInterval {
-			ac.animals[index].lastAttackTime = tick
-			ac.animals[index].lastAttackTickRound = tickRounds
-			animal.SurvivalSkill()
-		}
+		// Calculate the distance traveled
+		xDelta := monsterNearest.locateX - ani.locateX
+		yDelta := monsterNearest.locateY - ani.locateY
+		localDistance := math.Sqrt(xDelta*xDelta + yDelta*yDelta)
+		moveRate := ani.moveSpeed
+		moveX := (moveRate / localDistance) * xDelta
+		moveY := (moveRate / localDistance) * yDelta
+		ani.AnimalMove(moveX, moveY)
 	}
 }
 
-func (ani *Animal) SurvivalSkill() {
+func (ani *Animal) SurvivalSkill(game *Game) {
 	var bullets []*Bullet
 	if ani.animalType == consts.AnimalTypeCat {
 		// Cat fire bullets that automatically capture the enemy
@@ -158,6 +194,43 @@ func (ani *Animal) SurvivalSkill() {
 				bullets = append(bullets, bullet)
 			}
 		}
+	} else if ani.animalType == consts.AnimalTypeCactus {
+		// Cactus fire bullets around itself
+		directionX := []float64{3 * consts.SmallUnitPx, -3 * consts.SmallUnitPx, 0}
+		directionY := []float64{3 * consts.SmallUnitPx, -3 * consts.SmallUnitPx, 0}
+		for _, dx := range directionX {
+			for _, dy := range directionY {
+				if dx == 0 && dy == 0 {
+					continue
+				}
+				bullet, _ := NewBullet(ani.locateX, ani.locateY, ani.locateX+dx, ani.locateY+dy, ani.bulletSpeed, ani.bulletDamage)
+				bullets = append(bullets, bullet)
+			}
+		}
+	} else if ani.animalType == consts.AnimalTypeMonkey {
+		// Cactus fire bullets around itself
+		directionX := []float64{1.5 * consts.SmallUnitPx, -1.5 * consts.SmallUnitPx, 0}
+		directionY := []float64{1.5 * consts.SmallUnitPx, -1.5 * consts.SmallUnitPx, 0}
+		for _, dx := range directionX {
+			for _, dy := range directionY {
+				if dx == 0 && dy == 0 {
+					continue
+				}
+				bullet, _ := NewBullet(ani.locateX, ani.locateY, ani.locateX+dx, ani.locateY+dy, ani.bulletSpeed, ani.bulletDamage)
+				bullets = append(bullets, bullet)
+			}
+		}
+	} else if ani.animalType == consts.AnimalTypeHorse {
+		for j := 0; j < len(game.monstersContainer.monsters); j++ {
+			monster := game.monstersContainer.monsters[j]
+			if ani.checkCollision(monster, ani) {
+				// hit
+				monster.healthPoint -= ani.bulletDamage
+				monster.SkillsWhenInjured(game)
+				ani.healthPoint = 0
+				game.animationContainer.AddAnimation(consts.AnimationTypeFire, consts.TimeInterval, monster.locateX, monster.locateY)
+			}
+		}
 	}
 
 	if len(bullets) > 0 {
@@ -169,4 +242,53 @@ func (ani *Animal) SurvivalSkill() {
 func (ani *Animal) AnimalMove(dx, dy float64) {
 	ani.locateX += dx
 	ani.locateY += dy
+}
+
+// findNearestMonster help someone find the nearest Monster
+func (ani *Animal) findNearestMonster(monster []*Monster) *Monster {
+	if len(monster) == 0 {
+		return nil
+	}
+	minDistance := float64(consts.MaxInt)
+	targetIndex := 0
+	for index, mon := range monster {
+		xDelta := math.Abs(mon.locateX - ani.locateX)
+		yDelta := math.Abs(mon.locateY - ani.locateX)
+		localDistance := math.Sqrt(xDelta*xDelta + yDelta*yDelta)
+		if localDistance < minDistance {
+			minDistance = localDistance
+			targetIndex = index
+		}
+	}
+	return monster[targetIndex]
+}
+
+// checkCollision Check if the animal hit the monster
+func (ani *Animal) checkCollision(m *Monster, b *Animal) bool {
+	monsterX1 := m.locateX - 10
+	monsterY1 := m.locateY - 10
+	monsterX2 := m.locateX + m.collisionSizeX + 10
+	monsterY2 := m.locateY + m.collisionSizeY + 10
+	bulletX1 := b.locateX
+	bulletY1 := b.locateY
+	if bulletX1 >= monsterX1 && bulletX1 <= monsterX2 && bulletY1 >= monsterY1 && bulletY1 <= monsterY2 {
+		return true
+	}
+	return false
+}
+
+func (ani *Animal) Deathrattle(game *Game) {
+	if ani.healthPoint > 0 {
+		return
+	}
+	if ani.animalType == consts.AnimalTypeHorse {
+		// Kill monster units around 150 px.
+		for index := 0; index < len(game.monstersContainer.monsters); index++ {
+			mons := game.monstersContainer.monsters[index]
+			if math.Abs(mons.locateX-ani.locateX) <= 150 && math.Abs(mons.locateY-ani.locateY) <= 150 {
+				mons.healthPoint = mons.healthPoint - ani.bulletDamage
+			}
+		}
+	}
+
 }

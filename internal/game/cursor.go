@@ -41,6 +41,7 @@ func (c *Cursor) ListenMouseEvent() {
 	if ebiten.IsKeyPressed(ebiten.KeyDown) || ebiten.IsKeyPressed(ebiten.KeyS) {
 		c.locateY += 5
 	}
+	c.RecordNumberPress()
 	// Mouse click
 	if ebiten.IsMouseButtonPressed(ebiten.MouseButtonLeft) {
 		clickX, clickY := ebiten.CursorPosition()
@@ -63,4 +64,31 @@ func (c *Cursor) Draw(screen *ebiten.Image) {
 		c.image,
 		option,
 	)
+}
+
+func (c *Cursor) RecordNumberPress() {
+	if ebiten.IsKeyPressed(ebiten.Key1) {
+		SetNumberKeyPress(1)
+	}
+	if ebiten.IsKeyPressed(ebiten.Key2) {
+		SetNumberKeyPress(2)
+	}
+	if ebiten.IsKeyPressed(ebiten.Key3) {
+		SetNumberKeyPress(3)
+	}
+	if ebiten.IsKeyPressed(ebiten.Key4) {
+		SetNumberKeyPress(4)
+	}
+	if ebiten.IsKeyPressed(ebiten.Key5) {
+		SetNumberKeyPress(5)
+	}
+	if ebiten.IsKeyPressed(ebiten.Key6) {
+		SetNumberKeyPress(6)
+	}
+	if ebiten.IsKeyPressed(ebiten.Key7) {
+		SetNumberKeyPress(7)
+	}
+	if ebiten.IsKeyPressed(ebiten.Key8) {
+		SetNumberKeyPress(8)
+	}
 }

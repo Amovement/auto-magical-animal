@@ -15,10 +15,12 @@ import (
 //	like score and maxScore and game status and some other information
 //	Only painting is included, but regardless of updates to these attributes, updates are the responsibility of other struct
 type InfoContainer struct {
-	boxImage  *ebiten.Image
-	infoBoxes []*Info
-	boxHeight float64
-	boxWidth  float64
+	boxImage             *ebiten.Image
+	waitSelectedBoxImage *ebiten.Image
+	selectedBoxImage     *ebiten.Image
+	infoBoxes            []*Info
+	boxHeight            float64
+	boxWidth             float64
 }
 
 type Info struct {
@@ -28,6 +30,8 @@ type Info struct {
 
 var (
 	infoContainerImage        *ebiten.Image
+	waitSelectedBoxImage      *ebiten.Image
+	selectedBoxImage          *ebiten.Image
 	errLoadInfoContainerImage error
 )
 
@@ -36,14 +40,24 @@ func init() {
 	if errLoadInfoContainerImage != nil {
 		log.Panic(errLoadInfoContainerImage)
 	}
+	selectedBoxImage, _, errLoadInfoContainerImage = ebitenutil.NewImageFromReader(bytes.NewReader(assets.SelectedBox))
+	if errLoadInfoContainerImage != nil {
+		log.Panic(errLoadInfoContainerImage)
+	}
+	waitSelectedBoxImage, _, errLoadInfoContainerImage = ebitenutil.NewImageFromReader(bytes.NewReader(assets.WaitSelectedBox))
+	if errLoadInfoContainerImage != nil {
+		log.Panic(errLoadInfoContainerImage)
+	}
 }
 
 func NewInfoContainer() *InfoContainer {
 	return &InfoContainer{
-		boxImage:  infoContainerImage,
-		infoBoxes: []*Info{},
-		boxWidth:  336,
-		boxHeight: 145,
+		boxImage:             infoContainerImage,
+		selectedBoxImage:     selectedBoxImage,
+		waitSelectedBoxImage: waitSelectedBoxImage,
+		infoBoxes:            []*Info{},
+		boxWidth:             336,
+		boxHeight:            145,
 	}
 }
 
@@ -75,6 +89,23 @@ func (i *InfoContainer) Draw(screen *ebiten.Image) {
 	}
 	for ind, info := range i.infoBoxes {
 		ebitenutil.DebugPrintAt(screen, info.message, int(consts.GameWidth-i.boxWidth)/2+50, int(consts.GameHeight-i.boxHeight-45)+ind*15)
+	}
+
+	// draw waitSelectedBoxImage
+	option := &ebiten.DrawImageOptions{}
+	option.GeoM.Translate(56, 540)
+	screen.DrawImage(i.waitSelectedBoxImage, option)
+	option = &ebiten.DrawImageOptions{}
+	option.GeoM.Translate(float64(65+(numberKeyPress-1)*64.0), 549)
+	screen.DrawImage(i.selectedBoxImage, option)
+
+	// draw animal images with weather now
+	for index := 0; index < len(weatherAnimalsArray[weatherType]); index++ {
+		option = &ebiten.DrawImageOptions{}
+		option.GeoM.Translate(float64(85+(index)*64.0), 569)
+
+		animalType := weatherAnimalsArray[weatherType][index]
+		screen.DrawImage(animalImagesArr[animalType], option)
 	}
 }
 

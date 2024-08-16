@@ -26,6 +26,8 @@ var (
 	maxScore int
 	// bossLastCreatedTickRound records the last tick round when boss was created
 	bossLastCreatedTickRound int
+	// numberKeyPress Record the last number key pressed
+	numberKeyPress int
 )
 
 func init() {
@@ -34,10 +36,15 @@ func init() {
 	tickRounds = 0
 	gameStatus = 0
 	bossLastCreatedTickRound = 0
+	numberKeyPress = 1
 	bulletVector = []*Bullet{}
 	animalVector = []*Animal{}
 	monsterVector = []*Monster{}
 	infoVector = []*Info{}
+}
+
+func SetNumberKeyPress(num int) {
+	numberKeyPress = num
 }
 
 // SetGameStatus Set game state
@@ -45,7 +52,9 @@ func init() {
 //	gameStatus 0 running, game 1 end, game 2 pause
 func SetGameStatus(status int) {
 	if status == consts.GameStatusEnd {
-		maxScore = score
+		if score > maxScore {
+			maxScore = score
+		}
 	}
 	gameStatus = status
 }
@@ -101,5 +110,6 @@ func RestartGlobal() {
 	tick = 0
 	tickRounds = 0
 	score = 20
+	numberKeyPress = 1
 	SetGameStatus(consts.GameStatusRunning)
 }

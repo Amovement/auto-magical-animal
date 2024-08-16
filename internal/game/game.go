@@ -42,7 +42,6 @@ func (g *Game) Update() error {
 	g.weather.Update()
 	// home and animals fire a bullet
 	g.home.Update()
-	g.animalsContainer.Update()
 	// Create monster
 	g.monstersContainer.CreateMonster()
 	// Game frames logic update
